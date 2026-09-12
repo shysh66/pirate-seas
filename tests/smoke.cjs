@@ -36,6 +36,10 @@ assert.equal(api.CONTENT.filter(unit => unit.world === 'foundations').reduce((su
 assert.equal(api.CONTENT.find(unit => unit.id === 'P01').missions.length, 7);
 assert.match(app.innerHTML, /Welcome Harbor/);
 assert.match(app.innerHTML, /לא צריך לדעת אנגלית/);
+assert.match(app.innerHTML, /מפת המסע/);
+assert.equal((app.innerHTML.match(/class="welcome-stop/g) || []).length, 7, 'Welcome map should show the full route');
+assert.match(app.innerHTML, /mode-title">מסלול הקשבה<\/span><small>/);
+assert.match(app.innerHTML, /mode-title">מסלול קריאה<\/span><small>/);
 validateHandlers();
 
 run("chooseMode('reader')");
