@@ -83,6 +83,8 @@ h2 { margin: 0 0 12px; font-size: clamp(1.5rem, 4vw, 2.5rem); }
 .map-actions { margin-top:22px; color:#466773; font-weight:700; }
 .foundation-hero { background:linear-gradient(135deg, #0d789c, #3db8c7 50%, #f1b94c 51%, #e48647); }
 .short-path { grid-template-columns:repeat(5, minmax(74px, 1fr)); max-width:760px; margin-inline:auto; }
+.path-heading { display:flex; justify-content:space-between; align-items:end; gap:12px; margin:28px 0 -20px; padding:0 4px; }
+.path-heading b { font-size:1.08rem; }.path-heading span { color:#56717d; font-size:.92rem; }
 .activity-panel { min-height:560px; }
 .help-button { width:48px; height:48px; border:2px solid #b9dbe6; border-radius:50%; background:#e6f5f9; font-size:1.25rem; }
 .option-label { display:block; }.listen-label { display:block; font-size:1.2rem; color:var(--ocean); }
@@ -101,5 +103,5 @@ h2 { margin: 0 0 12px; font-size: clamp(1.5rem, 4vw, 2.5rem); }
 .completion-actions { justify-content:center; }
 
 @media (max-width: 680px) {
-  .topbar { align-items:flex-start; }.level-path, .short-path { grid-template-columns:repeat(2, 1fr); }.panel { border-radius:21px; }.screen-header { align-items:flex-start; flex-direction:column; }.purse { font-size:.84rem; flex-wrap:wrap; }.world-route { grid-template-columns:1fr; }.unit-card { grid-template-columns:auto 1fr; }.unit-percent { grid-column:2; }.flag-grid { grid-template-columns:repeat(2, 1fr); }.boss-scene { grid-template-columns:1fr; text-align:center; }.activity-panel { min-height:0; }.welcome-route { grid-template-columns:repeat(4, 1fr); row-gap:15px; }.welcome-route::before { display:none; }.welcome-stop small { font-size:.75rem; }
+  .topbar { align-items:flex-start; }.level-path, .short-path { grid-template-columns:repeat(2, 1fr); }.panel { border-radius:21px; }.screen-header { align-items:flex-start; flex-direction:column; }.purse { font-size:.84rem; flex-wrap:wrap; }.world-route { grid-template-columns:1fr; }.unit-card { grid-template-columns:auto 1fr; }.unit-percent { grid-column:2; }.flag-grid { grid-template-columns:repeat(2, 1fr); }.boss-scene { grid-template-columns:1fr; text-align:center; }.activity-panel { min-height:0; }.welcome-route { grid-template-columns:repeat(4, 1fr); row-gap:15px; }.welcome-route::before { display:none; }.welcome-stop small { font-size:.75rem; }.path-heading { align-items:flex-start; flex-direction:column; margin-bottom:-22px; }
 }

@@ -142,21 +142,29 @@ let session = null;
 let state = loadState();
 
 function freshState() {
-  return { version: 2, mode: null, coins: 0, pearls: 0, avatar: "🦜", flag: null, progress: {}, attempts: {} };
+  return { version: 3, routeVersion: 1, mode: null, coins: 0, pearls: 0, avatar: "🦜", flag: null, progress: {}, attempts: {} };
 }
 
 function loadState() {
   try {
     const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
-    if (saved?.version === 2) return { ...freshState(), ...saved, progress: saved.progress || {}, attempts: saved.attempts || {} };
+    if (saved?.version === 3) return { ...freshState(), ...saved, progress: saved.progress || {}, attempts: saved.attempts || {} };
+    if (saved?.version === 2) {
+      const migrated = { ...freshState(), ...saved, version: 3, routeVersion: 1, progress: { ...(saved.progress || {}) }, attempts: saved.attempts || {} };
+      const foundations = CONTENT.filter(unit => unit.world === "foundations");
+      const wasAutoCompleted = saved.pearls === 0 && foundations.every(unit => (saved.progress?.[unit.id] || 0) >= unit.missions.length);
+      if (wasAutoCompleted) foundations.forEach(unit => { delete migrated.progress[unit.id]; });
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(migrated));
+      return migrated;
+    }
     const old = JSON.parse(localStorage.getItem("pirate-seas-mvp"));
     if (old?.mode) {
       const migrated = freshState();
       migrated.mode = old.mode;
       migrated.coins = old.coins || 0;
       migrated.pearls = old.pearls || 0;
-      CONTENT.filter(unit => unit.world === "foundations").forEach(unit => { migrated.progress[unit.id] = unit.missions.length; });
       migrated.progress.P01 = Math.max(0, Math.min(7, old.level || 0));
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(migrated));
       return migrated;
     }
   } catch { /* fall through */ }
@@ -226,7 +234,7 @@ function showUnit(unitId) {
     return `<button class="level-node ${complete ? "done" : ""} ${available ? "" : "locked"}" ${available ? `onclick="startMission('${unit.id}',${missionIndex})"` : "disabled"}><span>${complete ? "✅" : mission.icon}</span><small>${missionIndex + 1}</small><small>${esc(mission.nameHe)}</small></button>`;
   }).join("");
   const percent = Math.round(progress / unit.missions.length * 100);
-  shell(`<section class="panel"><div class="island-hero ${unit.world === "foundations" ? "foundation-hero" : ""}"><p class="eyebrow english">${esc(unit.nameEn)}</p><h2>${esc(unit.nameHe)}</h2><p>${esc(unit.summaryHe)}</p><button class="primary" onclick="startMission('${unit.id}',${done ? 0 : activeMission(unit)})">${done ? "שחקו שוב" : "המשיכו"}</button></div><div class="mastery"><div class="mastery-label"><span>התקדמות ביחידה</span><span>${percent}%</span></div><div class="meter"><span style="width:${percent}%"></span></div></div><div class="level-path ${unit.missions.length <= 5 ? "short-path" : ""}">${nodes}</div></section>`, { back: true });
+  shell(`<section class="panel"><div class="island-hero ${unit.world === "foundations" ? "foundation-hero" : ""}"><p class="eyebrow english">${esc(unit.nameEn)}</p><h2>${esc(unit.nameHe)}</h2><p>${esc(unit.summaryHe)}</p><button class="primary" onclick="startMission('${unit.id}',${done ? 0 : activeMission(unit)})">${done ? "שחקו שוב" : "המשיכו"}</button></div><div class="mastery"><div class="mastery-label"><span>התקדמות במקום</span><span>${percent}%</span></div><div class="meter"><span style="width:${percent}%"></span></div></div><div class="path-heading"><b>המשימות בתוך ${esc(unit.nameHe)}</b><span>מסיימים לפי הסדר לפני שמפליגים למקום הבא</span></div><div class="level-path ${unit.missions.length <= 5 ? "short-path" : ""}">${nodes}</div></section>`, { back: true });
 }
 
 function startMission(unitId, missionIndex) {
@@ -380,7 +388,9 @@ function chooseDialogue(choice) {
 function completeMission() {
   const unit = UNIT_BY_ID[session.unitId];
   const completedIndex = session.missionIndex;
-  const firstCompletion = getProgress(unit.id) === completedIndex;
+  const progressBefore = getProgress(unit.id);
+  const replayingCompletedLocation = progressBefore >= unit.missions.length;
+  const firstCompletion = progressBefore === completedIndex;
   if (firstCompletion) {
     state.progress[unit.id] = completedIndex + 1;
     state.coins += 10;
@@ -393,7 +403,15 @@ function completeMission() {
   const unitDone = isComplete(unit.id);
   const nextIndex = CONTENT.indexOf(unit) + 1;
   const nextUnit = CONTENT[nextIndex];
-  shell(`<section class="panel completion"><div class="hero-art">${unitDone ? "🏆✨🦜" : "✨🪙✨"}</div><h2>${unitDone ? `${esc(unit.nameHe)} הושלם!` : "כל הכבוד, חברי צוות!"}</h2><p class="lead">${unitDone ? `הרווחתם פנינה ופתחתם את ${nextUnit ? esc(nextUnit.nameHe) : "הים הבא"}.` : `המשימה נשמרה. ${firstCompletion ? "קיבלתם 10 מטבעות." : "תרגול חוזר תמיד זמין."}`}</p><div class="completion-actions">${!unitDone ? `<button class="primary" onclick="startMission('${unit.id}',${Math.min(completedIndex + 1, unit.missions.length - 1)})">למשימה הבאה</button>` : nextUnit ? `<button class="primary" onclick="showUnit('${nextUnit.id}')">אל ${esc(nextUnit.nameHe)}</button>` : ""}<button class="secondary" onclick="showWorld()">למפה</button></div></section>`, { back: true });
+  const hasAnotherMissionHere = completedIndex < unit.missions.length - 1;
+  const title = replayingCompletedLocation ? `ממשיכים לתרגל ב${unit.nameHe}` : unitDone ? `${unit.nameHe} הושלם!` : "כל הכבוד, חברי צוות!";
+  const message = replayingCompletedLocation ? "נשארים במקום הזה וממשיכים בין המשימות שלו." : unitDone ? `הרווחתם פנינה ופתחתם את ${nextUnit ? esc(nextUnit.nameHe) : "הים הבא"}.` : `המשימה נשמרה. ${firstCompletion ? "קיבלתם 10 מטבעות." : "תרגול חוזר תמיד זמין."}`;
+  let primaryAction = "";
+  if (replayingCompletedLocation && hasAnotherMissionHere) primaryAction = `<button class="primary" onclick="startMission('${unit.id}',${completedIndex + 1})">למשימה הבאה במקום הזה</button>`;
+  else if (replayingCompletedLocation) primaryAction = `<button class="primary" onclick="showUnit('${unit.id}')">לכל משימות המקום</button>`;
+  else if (!unitDone) primaryAction = `<button class="primary" onclick="startMission('${unit.id}',${completedIndex + 1})">למשימה הבאה במקום הזה</button>`;
+  else if (nextUnit) primaryAction = `<button class="primary" onclick="showUnit('${nextUnit.id}')">השלמנו כאן — מפליגים אל ${esc(nextUnit.nameHe)}</button>`;
+  shell(`<section class="panel completion"><div class="hero-art">${unitDone && !replayingCompletedLocation ? "🏆✨🦜" : "✨🪙✨"}</div><h2>${esc(title)}</h2><p class="lead">${message}</p><div class="completion-actions">${primaryAction}<button class="secondary" onclick="showUnit('${unit.id}')">משימות ${esc(unit.nameHe)}</button><button class="secondary" onclick="showWorld()">למפה הכללית</button></div></section>`, { back: true });
 }
 
 function validateContent() {

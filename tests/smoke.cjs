@@ -105,6 +105,33 @@ vm.runInContext(readFileSync('app.js', 'utf8'), reloadContext);
 assert.match(reloadApp.innerHTML, /מפת ההתחלה/, 'Saved learners should resume at the map');
 assert.match(reloadApp.innerHTML, new RegExp(`🪙 ${finalState.coins}`), 'Saved rewards should survive reload');
 
+// Repair the v2 migration that incorrectly marked every foundation location complete.
+const badV2 = {
+  version: 2, mode: 'reader', coins: 17, pearls: 0,
+  progress: Object.fromEntries(api.CONTENT.filter(unit => unit.world === 'foundations').map(unit => [unit.id, unit.missions.length]))
+};
+badV2.progress.P01 = 2;
+const migrationStore = new Map([['pirate-seas-v2', JSON.stringify(badV2)]]);
+const migrationApp = { innerHTML: '' };
+const migrationWindow = {};
+vm.runInContext(readFileSync('app.js', 'utf8'), vm.createContext({
+  document: { querySelector: selector => selector === '#app' ? migrationApp : feedback },
+  localStorage: { getItem: key => migrationStore.get(key) ?? null, setItem: (key, value) => migrationStore.set(key, value) },
+  window: migrationWindow,
+  setTimeout: fn => { fn(); return 1; }
+}));
+const repairedState = migrationWindow.PirateSeas.getState();
+assert.equal(repairedState.version, 3);
+assert.equal(repairedState.progress.F00 || 0, 0, 'Auto-completed foundations should reset to mission 1');
+assert.equal(repairedState.progress.P01, 2, 'Existing Name Island progress should be preserved');
+assert.equal(repairedState.coins, 17, 'Existing rewards should be preserved');
+
+// Replaying mission 1 of a completed location stays inside that location.
+run("state = freshState(); state.mode = 'reader'; state.progress.F00 = 4; startMission('F00', 0); chooseAnswer('hello')");
+assert.match(app.innerHTML, /למשימה הבאה במקום הזה/);
+assert.match(app.innerHTML, /startMission\('F00',1\)/);
+assert.doesNotMatch(app.innerHTML, /showUnit\('F01'\)/);
+
 run("state = freshState(); state.mode = 'reader'; state.progress.P01 = 4; startMission('P01', 4)");
 run("selectToken('happy', 2); selectToken('I', 0); selectToken('am', 1); checkSequence()");
 assert.match(app.innerHTML, /I am happy/);
