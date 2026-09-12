@@ -35,6 +35,8 @@ h2 { margin: 0 0 12px; font-size: clamp(1.5rem, 4vw, 2.5rem); }
 .mode, .choice, .card, .tile { background: white; border: 3px solid #d9e9ef; color: var(--ink); min-height: 112px; padding: 14px; font-weight: bold; font-size: 1.06rem; }
 .mode:hover, .choice:hover, .card:hover, .tile:hover, .level-node:not(:disabled):hover { transform: translateY(-4px); box-shadow: 0 7px 0 rgba(8,43,76,.17); border-color: var(--ocean); }
 .mode .emoji, .card .emoji { font-size: 2.35rem; display: block; margin-bottom: 8px; }
+.mode-title { display:block; }
+.mode small { display:block; margin-top:7px; color:#58717c; font-weight:600; line-height:1.35; }
 .primary { padding: 12px 20px; background: var(--coral); color: white; border: 3px solid #db5145; font-weight: 800; box-shadow: 0 4px 0 #b8433a; }
 .secondary { padding: 10px 16px; background: #e6f5f9; color: var(--navy); border: 2px solid #b9dbe6; font-weight: 700; }
 .primary:hover, .secondary:hover { transform: translateY(-2px); }
@@ -55,6 +57,15 @@ h2 { margin: 0 0 12px; font-size: clamp(1.5rem, 4vw, 2.5rem); }
 .eyebrow { margin: 0 0 8px; color: #167291; font-weight: 900; letter-spacing: .04em; text-transform: uppercase; }
 .safe-note { color: #436373; font-weight: 700; }
 .welcome-harbor { position: relative; overflow: hidden; }
+.welcome-map { max-width:920px; margin:20px auto 8px; padding:16px; border:3px solid #e2c275; border-radius:22px; background:linear-gradient(135deg, #fff4ca, #f3dfaa); box-shadow:inset 0 0 0 3px rgba(255,255,255,.55); text-align:right; }
+.map-title { display:flex; align-items:center; gap:10px; margin-bottom:14px; }
+.map-title > span { font-size:2rem; }.map-title div { display:flex; flex-direction:column; }.map-title small { color:#725d32; margin-top:2px; }
+.welcome-route { position:relative; display:grid; grid-template-columns:repeat(7, minmax(76px, 1fr)); gap:9px; direction:rtl; }
+.welcome-route::before { content:""; position:absolute; top:25px; right:6%; left:6%; border-top:4px dashed rgba(40,116,139,.48); }
+.welcome-stop { position:relative; z-index:1; min-height:82px; display:flex; flex-direction:column; align-items:center; justify-content:flex-start; gap:7px; text-align:center; color:#315a68; }
+.welcome-stop > span { width:52px; height:52px; display:grid; place-items:center; border:3px solid #78b5c7; border-radius:50%; background:#f8fdff; font-size:1.65rem; }
+.welcome-stop.current > span { border-color:#e2952b; background:#fff1a9; box-shadow:0 0 0 5px rgba(255,189,56,.2); }
+.welcome-stop small { font-weight:800; line-height:1.2; }
 .world-panel { padding-bottom: 30px; }
 .world-heading, .map-actions, .completion-actions { display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap; }
 .world-heading p { margin: 5px 0; line-height: 1.5; }
@@ -90,5 +101,5 @@ h2 { margin: 0 0 12px; font-size: clamp(1.5rem, 4vw, 2.5rem); }
 .completion-actions { justify-content:center; }
 
 @media (max-width: 680px) {
-  .topbar { align-items:flex-start; }.level-path, .short-path { grid-template-columns:repeat(2, 1fr); }.panel { border-radius:21px; }.screen-header { align-items:flex-start; flex-direction:column; }.purse { font-size:.84rem; flex-wrap:wrap; }.world-route { grid-template-columns:1fr; }.unit-card { grid-template-columns:auto 1fr; }.unit-percent { grid-column:2; }.flag-grid { grid-template-columns:repeat(2, 1fr); }.boss-scene { grid-template-columns:1fr; text-align:center; }.activity-panel { min-height:0; }
+  .topbar { align-items:flex-start; }.level-path, .short-path { grid-template-columns:repeat(2, 1fr); }.panel { border-radius:21px; }.screen-header { align-items:flex-start; flex-direction:column; }.purse { font-size:.84rem; flex-wrap:wrap; }.world-route { grid-template-columns:1fr; }.unit-card { grid-template-columns:auto 1fr; }.unit-percent { grid-column:2; }.flag-grid { grid-template-columns:repeat(2, 1fr); }.boss-scene { grid-template-columns:1fr; text-align:center; }.activity-panel { min-height:0; }.welcome-route { grid-template-columns:repeat(4, 1fr); row-gap:15px; }.welcome-route::before { display:none; }.welcome-stop small { font-size:.75rem; }
 }
