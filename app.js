@@ -1,89 +1,425 @@
-/* Pirate Seas MVP — client-side only. Recorded asset playback replaces speak() in production. */
-const words = [
-  { en: "hello", emoji: "👋" }, { en: "goodbye", emoji: "⛵" },
-  { en: "boy", emoji: "👦" }, { en: "girl", emoji: "👧" },
-  { en: "teacher", emoji: "🧑‍🏫" }, { en: "friend", emoji: "🧑‍🤝‍🧑" },
-  { en: "happy", emoji: "😊" }, { en: "sad", emoji: "😢" }
-];
-const levels = [
-  { icon: "👂", name: "Listen & Tap", he: "הקשיבו ובחרו" },
-  { icon: "🃏", name: "Picture Match", he: "מצאו זוגות" },
-  { icon: "🔤", name: "Sound / Word", he: "אוזני התוכי" },
-  { icon: "🦜", name: "Listen & Do", he: "התוכי אומר" },
-  { icon: "🌉", name: "Bridge", he: "בנו את הגשר" },
-  { icon: "💎", name: "Treasure Dive", he: "צלילת אוצר" },
-  { icon: "🏴‍☠️", name: "Captain Morgan", he: "דברו עם הקפטן" }
-];
-const app = document.querySelector("#app");
-let state = load();
+/* Pirate Seas — dependency-free curriculum prototype. */
+const STORAGE_KEY = "pirate-seas-v2";
 
-function load() { try { return JSON.parse(localStorage.getItem("pirate-seas-mvp")) || { mode: null, level: 0, coins: 0, pearls: 0, seen: 0 }; } catch { return { mode:null, level:0, coins:0, pearls:0, seen:0 }; } }
-function save() { localStorage.setItem("pirate-seas-mvp", JSON.stringify(state)); }
-function speak(text) { if ("speechSynthesis" in window) { speechSynthesis.cancel(); const u = new SpeechSynthesisUtterance(text); u.lang = "en-US"; u.rate = .8; speechSynthesis.speak(u); } }
-function esc(value) { return String(value).replace(/[&<>"]/g, char => ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"})[char]); }
-function header(back = false) { return `<header class="topbar"><div class="brand"><span class="brand-mark">🏴‍☠️</span><div><h1>Pirate Seas</h1><p>הרפתקת אנגלית</p></div></div><div class="purse"><span>🪙 ${state.coins}</span><span>🦪 ${state.pearls}</span>${back ? `<button class="secondary" onclick="showMap()">↩ למפה</button>` : ""}</div></header>`; }
-function shell(content, className="") { app.innerHTML = `<div class="app-shell">${header(className !== "welcome")}${content}<p class="footer-note">MVP לפיתוח: הקול בדפדפן מחליף זמנית הקלטות של דובר/ת אנגלית.</p></div>`; }function answerOptions(answer, count) { return shuffle([answer, ...shuffle(words.filter(word => word.en !== answer.en)).slice(0, count - 1)]); }
+const O = (id, emoji, audio = id, label = id) => ({ id, emoji, audio, label });
+const L = (id, emoji, sound, name = id.toUpperCase()) => O(id, emoji, sound, name);
+
+const CONTENT = [
+  {
+    id: "F00", world: "foundations", icon: "⚓", nameHe: "נמל ברוכים הבאים", nameEn: "Welcome Harbor",
+    summaryHe: "פוגשים את התוכי ולומדים להקשיב, לבחור, לנוע ולעצור.", reward: 20,
+    missions: [
+      { id: "F00-M01", icon: "👋", nameHe: "שלום, תוכי!", kind: "choice", instructionHe: "התוכי אומר Hello. געו ביד שמנופפת.", rounds: [
+        { say: "Hello!", answer: "hello", options: [O("hello", "👋", "Hello!"), O("boat", "⛵", "Boat"), O("parrot", "🦜", "Parrot")] }
+      ] },
+      { id: "F00-M02", icon: "🔊", nameHe: "בודקים את הצליל", kind: "collect", instructionHe: "געו בכל תמונה. התוכי ישמיע את המילה.", items: [O("listen", "👂", "Listen"), O("look", "👀", "Look"), O("yes", "👍", "Yes"), O("no", "👎", "No")] },
+      { id: "F00-M03", icon: "⛵", nameHe: "הסירה זזה", kind: "choice", instructionHe: "הקשיבו ועזרו לסירה לנוע או לעצור.", rounds: [
+        { say: "Go!", answer: "go", options: [O("go", "▶️", "Go"), O("stop", "⏹️", "Stop")] },
+        { say: "Stop!", answer: "stop", options: [O("go", "▶️", "Go"), O("stop", "⏹️", "Stop")] },
+        { say: "Go!", answer: "go", options: [O("go", "▶️", "Go"), O("stop", "⏹️", "Stop")] }
+      ] },
+      { id: "F00-M04", icon: "🚩", nameHe: "הדגל שלי", kind: "flag", instructionHe: "בחרו דגל לסירה, ואז אמרו Goodbye לנמל.", flags: ["🐚", "⭐", "🦜", "🌈"] }
+    ]
+  },
+  {
+    id: "F01", world: "foundations", icon: "🏮", nameHe: "אותיות הפנסים", nameEn: "Lantern Letters",
+    summaryHe: "מגלים את הצלילים s, a, t, p, i, n ומחברים אותם למילים ראשונות.", reward: 25,
+    missions: [
+      { id: "F01-M01", icon: "✨", nameHe: "s · a · t", kind: "collect", instructionHe: "הדליקו כל פנס ושמעו את הצליל.", items: [L("s", "☀️", "s, sun"), L("a", "🍎", "a, apple"), L("t", "🐯", "t, tiger")] },
+      { id: "F01-M02", icon: "✨", nameHe: "p · i · n", kind: "collect", instructionHe: "שלושה פנסים חדשים מחכים לכם.", items: [L("p", "🐷", "p, pig"), L("i", "🦎", "i, iguana"), L("n", "👃", "n, nose")] },
+      { id: "F01-M03", icon: "👂", nameHe: "הצליל הראשון", kind: "choice", instructionHe: "שמעו את הצליל ובחרו את התמונה שמתחילה בו.", rounds: [
+        { say: "s", answer: "sun", options: [O("sun", "☀️", "sun"), O("pig", "🐷", "pig"), O("nose", "👃", "nose")] },
+        { say: "p", answer: "pig", options: [O("tiger", "🐯", "tiger"), O("pig", "🐷", "pig"), O("apple", "🍎", "apple")] },
+        { say: "n", answer: "nose", options: [O("nose", "👃", "nose"), O("sun", "☀️", "sun"), O("tiger", "🐯", "tiger")] }
+      ], readerPrompt: "איזו תמונה מתחילה באות המוצגת?" },
+      { id: "F01-M04", icon: "🧩", nameHe: "מחברים צלילים", kind: "sequence", instructionHe: "הניחו את הצלילים משמאל לימין ובנו sat.", say: "s, a, t, sat", target: ["s", "a", "t"], picture: "🧍", result: "sat",
+        preVariant: { kind: "choice", instructionHe: "שמעו את המילה ובחרו את התמונה.", rounds: [{ say: "sat", answer: "sat", options: [O("sat", "🧍", "sat"), O("pin", "📌", "pin"), O("tap", "👆", "tap")] }] } }
+    ]
+  },
+  {
+    id: "F02", world: "foundations", icon: "🏖️", nameHe: "חוף הבקבוקים", nameEn: "Bottle Beach",
+    summaryHe: "מכירים m, d, g, o, c, k ובונים map, cat, dog.", reward: 25,
+    missions: [
+      { id: "F02-M01", icon: "🍾", nameHe: "m · d · g", kind: "collect", instructionHe: "פתחו את הבקבוקים ושמעו את הצלילים.", items: [L("m", "🗺️", "m, map"), L("d", "🐶", "d, dog"), L("g", "🎁", "g, gift")] },
+      { id: "F02-M02", icon: "🍾", nameHe: "o · c · k", kind: "collect", instructionHe: "עוד שלושה צלילים הגיעו לחוף.", items: [L("o", "🐙", "o, octopus"), L("c", "🐱", "c, cat"), L("k", "🔑", "k, key")] },
+      { id: "F02-M03", icon: "🔎", nameHe: "מה מתחיל כך?", kind: "choice", instructionHe: "הקשיבו ובחרו את התמונה המתאימה.", rounds: [
+        { say: "m", answer: "map", options: [O("map", "🗺️", "map"), O("dog", "🐶", "dog"), O("cat", "🐱", "cat")] },
+        { say: "d", answer: "dog", options: [O("map", "🗺️", "map"), O("dog", "🐶", "dog"), O("key", "🔑", "key")] },
+        { say: "c, cat", answer: "cat", options: [O("cat", "🐱", "cat"), O("gift", "🎁", "gift"), O("dog", "🐶", "dog")] }
+      ] },
+      { id: "F02-M04", icon: "⚙️", nameHe: "מכונת המילים", kind: "sequence", instructionHe: "הכניסו את הצלילים לפי הסדר ובנו dog.", say: "d, o, g, dog", target: ["d", "o", "g"], picture: "🐶", result: "dog",
+        preVariant: { kind: "choice", instructionHe: "איזו תמונה היא dog?", rounds: [{ say: "dog", answer: "dog", options: [O("cat", "🐱", "cat"), O("dog", "🐶", "dog"), O("map", "🗺️", "map")] }] } }
+    ]
+  },
+  {
+    id: "F03", world: "foundations", icon: "🌊", nameHe: "לגונת התנועות", nameEn: "Short-Vowel Lagoon",
+    summaryHe: "מבדילים בין תנועות קצרות ומשנים צליל אחד במילה.", reward: 25,
+    missions: [
+      { id: "F03-M01", icon: "👂", nameHe: "e או u", kind: "choice", instructionHe: "הקשיבו למילה ובחרו את התמונה.", rounds: [
+        { say: "pen", answer: "pen", options: [O("pen", "🖊️", "pen"), O("sun", "☀️", "sun")] },
+        { say: "sun", answer: "sun", options: [O("pen", "🖊️", "pen"), O("sun", "☀️", "sun")] }
+      ] },
+      { id: "F03-M02", icon: "🪷", nameHe: "r · h · b", kind: "collect", instructionHe: "געו בפרחים ושמעו צליל ומילה.", items: [L("r", "🏃", "r, run"), L("h", "🎩", "h, hat"), L("b", "🛏️", "b, bed")] },
+      { id: "F03-M03", icon: "🪷", nameHe: "f · l", kind: "collect", instructionHe: "השלימו את גינת הצלילים.", items: [L("f", "🐟", "f, fish"), L("l", "🦁", "l, lion"), L("e", "🥚", "e, egg"), L("u", "☂️", "u, umbrella")] },
+      { id: "F03-M04", icon: "🪄", nameHe: "מחליפים צליל", kind: "choice", instructionHe: "המילה משתנה בצליל אחד. בחרו את התמונה החדשה.", rounds: [
+        { say: "hat. Change a to o. hot.", answer: "hot", options: [O("hat", "🎩", "hat"), O("hot", "🥵", "hot"), O("bed", "🛏️", "bed")] },
+        { say: "pen. Change p to h. hen.", answer: "hen", options: [O("pen", "🖊️", "pen"), O("hen", "🐔", "hen"), O("sun", "☀️", "sun")] }
+      ] }
+    ]
+  },
+  {
+    id: "F04", world: "foundations", icon: "🔭", nameHe: "מצפה האלף־בית", nameEn: "Alphabet Lookout",
+    summaryHe: "משלימים את j, v, w, x, y, z, qu ומתקנים את שלט המצפה.", reward: 30,
+    missions: [
+      { id: "F04-M01", icon: "🔭", nameHe: "j · v · w", kind: "collect", instructionHe: "הביטו במצפה ושמעו שלושה צלילים.", items: [L("j", "🫙", "j, jam"), L("v", "🚐", "v, van"), L("w", "🌊", "w, wave")] },
+      { id: "F04-M02", icon: "🔭", nameHe: "x · y · z", kind: "collect", instructionHe: "גלו את הצלילים בקצה האלף־בית.", items: [L("x", "📦", "x, box"), L("y", "🪀", "y, yo-yo"), L("z", "🤐", "z, zip")] },
+      { id: "F04-M03", icon: "👑", nameHe: "q עם u", kind: "choice", instructionHe: "q ו־u מפליגות יחד. בחרו את queen.", rounds: [{ say: "qu, queen", answer: "queen", options: [O("queen", "👑", "queen"), O("van", "🚐", "van"), O("box", "📦", "box")] }] },
+      { id: "F04-M04", icon: "🔡", nameHe: "גדולה וקטנה", kind: "case", instructionHe: "התאימו לכל אות קטנה את האות הגדולה שלה.", pairs: [["s", "S"], ["m", "M"], ["w", "W"]],
+        preVariant: { kind: "choice", instructionHe: "שמעו w או v ובחרו את התמונה.", rounds: [{ say: "w, wave", answer: "wave", options: [O("wave", "🌊", "wave"), O("van", "🚐", "van")] }, { say: "v, van", answer: "van", options: [O("wave", "🌊", "wave"), O("van", "🚐", "van")] }] } },
+      { id: "F04-M05", icon: "🪧", nameHe: "מתקנים את השלט", kind: "sequence", instructionHe: "סדרו את האותיות החסרות משמאל לימין.", say: "x, y, z", target: ["x", "y", "z"], picture: "🪧", result: "xyz",
+        preVariant: { kind: "collect", instructionHe: "המצפה הושלם. געו בתמונות וחזרו על המילים.", items: [O("jam", "🫙", "jam"), O("van", "🚐", "van"), O("wave", "🌊", "wave"), O("box", "📦", "box"), O("zip", "🤐", "zip")] } }
+    ]
+  },
+  {
+    id: "F05", world: "foundations", icon: "💡", nameHe: "מגדלור המילים", nameEn: "First-Word Lighthouse",
+    summaryHe: "מחברים, מפרקים וקוראים מילים קצרות שכבר הכרנו.", reward: 40,
+    missions: [
+      { id: "F05-M01", icon: "🔦", nameHe: "קוראים באור", kind: "choice", instructionHe: "שמעו את המילה ובחרו את התמונה.", rounds: [
+        { say: "cat", answer: "cat", options: [O("cat", "🐱", "cat"), O("dog", "🐶", "dog"), O("hat", "🎩", "hat")] },
+        { say: "map", answer: "map", options: [O("map", "🗺️", "map"), O("sun", "☀️", "sun"), O("pen", "🖊️", "pen")] },
+        { say: "hat", answer: "hat", options: [O("cat", "🐱", "cat"), O("hat", "🎩", "hat"), O("bed", "🛏️", "bed")] }
+      ] },
+      { id: "F05-M02", icon: "🧱", nameHe: "בונים cat", kind: "sequence", instructionHe: "שמעו ובנו cat משמאל לימין.", say: "c, a, t, cat", target: ["c", "a", "t"], picture: "🐱", result: "cat",
+        preVariant: { kind: "choice", instructionHe: "שמעו cat ובחרו את התמונה.", rounds: [{ say: "cat", answer: "cat", options: [O("cat", "🐱", "cat"), O("dog", "🐶", "dog"), O("map", "🗺️", "map")] }] } },
+      { id: "F05-M03", icon: "🔁", nameHe: "משנים מילה", kind: "choice", instructionHe: "הקשיבו לשינוי ובחרו את התוצאה.", rounds: [
+        { say: "cat. Change c to h. hat.", answer: "hat", options: [O("cat", "🐱", "cat"), O("hat", "🎩", "hat"), O("hot", "🥵", "hot")] },
+        { say: "dog. Change d to l. log.", answer: "log", options: [O("dog", "🐶", "dog"), O("log", "🪵", "log"), O("map", "🗺️", "map")] }
+      ] },
+      { id: "F05-M04", icon: "🖼️", nameHe: "משפט קטן", kind: "choice", instructionHe: "שמעו a red hat ובחרו את התמונה.", rounds: [{ say: "a red hat", answer: "red-hat", options: [O("red-hat", "🎩🔴", "a red hat", "a red hat"), O("red-cat", "🐱🔴", "a red cat", "a red cat"), O("hot-sun", "☀️🥵", "hot sun", "hot sun")] }] },
+      { id: "F05-M05", icon: "🏆", nameHe: "מדליקים את המגדלור", kind: "checkpoint", instructionHe: "שלוש משימות קצרות ידליקו את המגדלור.", rounds: [
+        { say: "s", answer: "sun", options: [O("sun", "☀️", "sun"), O("map", "🗺️", "map"), O("dog", "🐶", "dog")] },
+        { say: "dog", answer: "dog", options: [O("cat", "🐱", "cat"), O("dog", "🐶", "dog"), O("hat", "🎩", "hat")] },
+        { say: "a red hat", answer: "red-hat", options: [O("red-hat", "🎩🔴", "a red hat", "a red hat"), O("cat", "🐱", "cat"), O("sun", "☀️", "sun")] }
+      ] }
+    ]
+  },
+  {
+    id: "P01", world: "pre-a1", icon: "🏝️", nameHe: "אי השמות", nameEn: "Name Island",
+    summaryHe: "אומרים שלום, מציגים את עצמנו ופוגשים חברים חדשים.", reward: 50,
+    missions: [
+      { id: "P01-M01", icon: "👂", nameHe: "פוגשים את האי", kind: "choice", instructionHe: "הקשיבו ובחרו את התמונה.", rounds: [
+        { say: "teacher", answer: "teacher", options: [O("teacher", "🧑‍🏫"), O("boy", "👦"), O("girl", "👧")] },
+        { say: "friend", answer: "friend", options: [O("friend", "🧑‍🤝‍🧑"), O("teacher", "🧑‍🏫"), O("girl", "👧")] },
+        { say: "girl", answer: "girl", options: [O("boy", "👦"), O("girl", "👧"), O("friend", "🧑‍🤝‍🧑")] }
+      ] },
+      { id: "P01-M02", icon: "🃏", nameHe: "זוגות של חברים", kind: "choice", instructionHe: "שמעו את הצדף ומצאו את התמונה.", rounds: [
+        { say: "boy", answer: "boy", options: [O("boy", "👦"), O("girl", "👧"), O("teacher", "🧑‍🏫")] },
+        { say: "goodbye", answer: "goodbye", options: [O("hello", "👋"), O("goodbye", "⛵"), O("friend", "🧑‍🤝‍🧑")] }
+      ] },
+      { id: "P01-M03", icon: "🔤", nameHe: "בונים girl", kind: "sequence", instructionHe: "סדרו את האותיות ובנו girl.", say: "girl", target: ["g", "i", "r", "l"], picture: "👧", result: "girl",
+        preVariant: { kind: "choice", instructionHe: "איזו תמונה מתחילה בצליל b?", rounds: [{ say: "b, boy", answer: "boy", options: [O("boy", "👦"), O("cat", "🐱"), O("sun", "☀️")] }] } },
+      { id: "P01-M04", icon: "🦜", nameHe: "התוכי אומר", kind: "choice", instructionHe: "הקשיבו לפקודה ובחרו מה לעשות.", rounds: [{ say: "Wave to the girl!", answer: "wave-girl", options: [O("wave-boy", "👋👦", "Wave to the boy", "Wave to the boy"), O("wave-girl", "👋👧", "Wave to the girl", "Wave to the girl"), O("walk-teacher", "🚶🧑‍🏫", "Walk to the teacher", "Walk to the teacher")] }] },
+      { id: "P01-M05", icon: "🌉", nameHe: "גשר המילים", kind: "sequence", instructionHe: "בנו את המשפט I am happy משמאל לימין.", say: "I am happy", target: ["I", "am", "happy"], picture: "🌉", result: "I am happy" },
+      { id: "P01-M06", icon: "💎", nameHe: "אוצר מילים", kind: "choice", instructionHe: "הקשיבו למילה ישנה ומצאו את האוצר.", rounds: [
+        { say: "hello", answer: "hello", options: [O("hello", "👋"), O("goodbye", "⛵"), O("friend", "🧑‍🤝‍🧑")] },
+        { say: "happy", answer: "happy", options: [O("happy", "😊"), O("sad", "😢"), O("teacher", "🧑‍🏫")] },
+        { say: "friend", answer: "friend", options: [O("friend", "🧑‍🤝‍🧑"), O("boy", "👦"), O("girl", "👧")] }
+      ] },
+      { id: "P01-M07", icon: "🏴‍☠️", nameHe: "קפטן מורגן", kind: "dialogue", instructionHe: "בחרו תשובה ועזרו לקפטן להכיר אתכם.", turns: [
+        { npc: "Ahoy! Hello!", good: "Hello!", options: ["Hello!", "Goodbye!"] },
+        { npc: "What's your name?", good: "My name is Captain!", options: ["My name is Captain!", "Goodbye!"] },
+        { npc: "How are you?", good: "I'm happy!", options: ["I'm happy!", "I happy"] },
+        { npc: "Who is this?", good: "This is my friend!", options: ["This is my friend!", "This friend"] },
+        { npc: "Welcome to Name Island! Goodbye!", good: "Goodbye!", options: ["Goodbye!", "Hello!"] }
+      ] }
+    ]
+  }
+];
+
+const UNIT_BY_ID = Object.fromEntries(CONTENT.map(unit => [unit.id, unit]));
+const app = document.querySelector("#app");
+let session = null;
+let state = loadState();
+
+function freshState() {
+  return { version: 2, mode: null, coins: 0, pearls: 0, avatar: "🦜", flag: null, progress: {}, attempts: {} };
+}
+
+function loadState() {
+  try {
+    const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
+    if (saved?.version === 2) return { ...freshState(), ...saved, progress: saved.progress || {}, attempts: saved.attempts || {} };
+    const old = JSON.parse(localStorage.getItem("pirate-seas-mvp"));
+    if (old?.mode) {
+      const migrated = freshState();
+      migrated.mode = old.mode;
+      migrated.coins = old.coins || 0;
+      migrated.pearls = old.pearls || 0;
+      CONTENT.filter(unit => unit.world === "foundations").forEach(unit => { migrated.progress[unit.id] = unit.missions.length; });
+      migrated.progress.P01 = Math.max(0, Math.min(7, old.level || 0));
+      return migrated;
+    }
+  } catch { /* fall through */ }
+  return freshState();
+}
+
+function saveState() { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
+function esc(value) { return String(value).replace(/[&<>\"]/g, char => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;" })[char]); }
+function jsArg(value) { return esc(JSON.stringify(value)); }
 function shuffle(list) { return [...list].sort(() => Math.random() - .5); }
+function speak(text) {
+  if ("speechSynthesis" in window && typeof SpeechSynthesisUtterance !== "undefined") {
+    speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = "en-US";
+    utterance.rate = .78;
+    speechSynthesis.speak(utterance);
+  }
+}
+
+function getProgress(unitId) { return Math.min(state.progress[unitId] || 0, UNIT_BY_ID[unitId].missions.length); }
+function isComplete(unitId) { return getProgress(unitId) >= UNIT_BY_ID[unitId].missions.length; }
+function unitUnlocked(index) { return index === 0 || isComplete(CONTENT[index - 1].id); }
+function currentUnitIndex() { const found = CONTENT.findIndex((unit, index) => unitUnlocked(index) && !isComplete(unit.id)); return found < 0 ? CONTENT.length - 1 : found; }
+function activeMission(unit) { return Math.min(getProgress(unit.id), unit.missions.length - 1); }
+function modeMission(mission) { return state.mode === "pre" && mission.preVariant ? { ...mission, ...mission.preVariant, id: mission.id, nameHe: mission.nameHe, icon: mission.icon } : mission; }
+
+function header(showMapButton = false) {
+  return `<header class="topbar"><div class="brand"><span class="brand-mark">🏴‍☠️</span><div><h1>Pirate Seas</h1><p>הרפתקת אנגלית</p></div></div><div class="purse"><span>🪙 ${state.coins}</span><span>🦪 ${state.pearls}</span>${showMapButton ? `<button class="secondary" onclick="showWorld()">↩ למפה</button>` : ""}</div></header>`;
+}
+
+function shell(content, options = {}) {
+  app.innerHTML = `<div class="app-shell">${header(Boolean(options.back))}${content}<p class="footer-note">אב־טיפוס: קול הדפדפן משמש זמנית במקום הקלטות אנושיות.</p></div>`;
+}
 
 function showWelcome() {
-  app.innerHTML = `<div class="app-shell">${header()}<section class="panel hero"><div class="hero-art">🏝️ 🦜 ⛵</div><h2>ברוכים הבאים ל־Pirate Seas</h2><p class="lead">לומדים אנגלית עם התוכי, אוספים אוצרות ומדברים עם קפטנים. בחרו איך תרצו לשחק.</p><div class="mode-picker"><button class="mode" onclick="chooseMode('pre')"><span class="emoji">🎧</span>טרום־קוראים<small>תמונות, צלילים והדגמות</small></button><button class="mode" onclick="chooseMode('reader')"><span class="emoji">📖</span>קוראים<small>תמונות, צלילים ומילים באנגלית</small></button></div><button class="secondary" onclick="resetGame()">התחלה חדשה</button></section><p class="footer-note">עברית מימין לשמאל · English activities stay left to right</p></div>`;
+  app.innerHTML = `<div class="app-shell">${header(false)}<section class="panel hero welcome-harbor"><div class="hero-art">⚓ 🦜 ⛵</div><p class="eyebrow">Welcome Harbor</p><h2>ההרפתקה מתחילה כאן</h2><p class="lead">לא צריך לדעת אנגלית או את האלף־בית. התוכי יראה, ישמיע ויעזור בכל צעד.</p><div class="mode-picker"><button class="mode" onclick="chooseMode('pre')"><span class="emoji">🎧</span>מסלול הקשבה<small>תמונות, צלילים והדגמות</small></button><button class="mode" onclick="chooseMode('reader')"><span class="emoji">📖</span>מסלול קריאה<small>צלילים, אותיות ומילים</small></button></div><p class="safe-note">אפשר לעצור בכל זמן. אין שעון ואין פסילה.</p></section><p class="footer-note">עברית מימין לשמאל · English stays left to right</p></div>`;
 }
-function chooseMode(mode) { state.mode = mode; save(); showMap(); }
-function resetGame() { localStorage.removeItem("pirate-seas-mvp"); state = load(); showWelcome(); }
 
-function showMap() {
+function chooseMode(mode) { state.mode = mode; saveState(); showWorld(); }
+function resetGame() { localStorage.removeItem(STORAGE_KEY); localStorage.removeItem("pirate-seas-mvp"); state = freshState(); session = null; showWelcome(); }
+
+function showWorld() {
   if (!state.mode) return showWelcome();
-  const mastery = Math.min(100, Math.round((state.level / 7) * 100));
-  const nodes = levels.map((level, index) => { const status = index < state.level ? "done" : index === state.level ? "" : "locked"; return `<button class="level-node ${status}" ${index > state.level ? "disabled" : ""} onclick="startLevel(${index})"><span>${index < state.level ? "✅" : level.icon}</span><small>${index + 1}</small><small>${level.he}</small></button>`; }).join("");
-  shell(`<section class="panel"><div class="island-hero"><h2>אי השמות</h2><p>הכירו את תושבי החוף, בנו גשר עם <b class="english">am / are</b>, וסיימו בשיחה עם קפטן מורגן.</p><button class="primary" onclick="startLevel(${state.level >= 7 ? 6 : state.level})">${state.level >= 7 ? "שחקו שוב" : "המשיכו להרפתקה"}</button></div><div class="mastery"><div class="mastery-label"><span>דגל השליטה שלי</span><span>${mastery}%</span></div><div class="meter"><span style="width:${mastery}%"></span></div></div><div class="level-path">${nodes}</div></section>`);
-}
-function startLevel(index) { if (index > state.level) return; if (index === 0) listenTap(); else if (index === 1) pictureMatch(); else if (index === 2) state.mode === "reader" ? wordBuilder() : soundMatch(); else if (index === 3) listenDo(); else if (index === 4) bridge(); else if (index === 5) treasureDive(); else boss(); }
-function activity(title, subtitle, body, extra="") { shell(`<section class="panel ${extra}"><div class="screen-header"><button class="secondary" onclick="showMap()">↩ חזרה למפה</button><div class="activity-top"><div class="activity-kicker">אי השמות · ${esc(title)}</div><h2>${esc(subtitle)}</h2></div><span></span></div>${body}</section>`); }
-function feedback(message, good=false) { const node = document.querySelector("#feedback"); node.textContent = message; node.className = `feedback ${good ? "good" : "try"}`; }
-function finish(level) { const first = state.level === level; if (first) { state.level = level + 1; state.coins += level === 6 ? 25 : 10; if (level === 6) state.pearls += 1; save(); } activity("אוצר נמצא!", level === 6 ? "הקפטן מצדיע לכם!" : "כל הכבוד, חברי צוות!", `<div class="completion"><div class="hero-art">${level === 6 ? "🏴‍☠️🎉🦜" : "✨🪙✨"}</div><p class="lead">${level === 6 ? "סיימתם את אי השמות. חזרו לתרגל בכל זמן." : `קיבלתם ${first ? "10 מטבעות" : "חיוך נוסף מהתוכי"}!`}</p><button class="primary" onclick="showMap()">חזרה למפת האי</button></div>`); }
-
-function listenTap() {
-  let round = 0; let answer = shuffle(words)[0];
-  const render = () => activity("Level 1", "פגשו את תושבי האי", `<p class="instruction">הקשיבו. על מי התוכי מדבר?</p><div class="prompt"><span class="emoji">🦜</span><span id="spoken" class="english">${answer.en}</span><br><button class="secondary" onclick="speak('${answer.en}')">🔊 שמעו שוב</button></div><div class="card-grid">${answerOptions(answer, 6).map(word => `<button class="card" onclick="listenChoice('${word.en}')"><span class="emoji">${word.emoji}</span>${state.mode === "reader" ? `<span class="english">${word.en}</span>` : "הקישו לבחירה"}</button>`).join("")}</div><div id="feedback" class="feedback"></div><div class="status-row"><span class="status-chip">${round + 1} / 4</span></div>`);
-  window.listenChoice = choice => { if (choice === answer.en) { round++; if (round === 4) return finish(0); feedback("מעולה! התוכי שמח.", true); answer = shuffle(words)[0]; setTimeout(render, 700); } else { feedback("בואו נקשיב שוב יחד."); speak(answer.en); } }; render(); setTimeout(() => speak(answer.en), 250);
-}
-function pictureMatch() {
-  let round = 0; let answer = shuffle(words)[0];
-  const render = () => activity("Level 2", "מצאו את הזוג", `<p class="instruction">לחצו על הקליפה כדי לשמוע מילה, ואז התאימו לתמונה הנכונה.</p><div class="prompt"><span class="emoji">🐚</span><button class="primary" onclick="speak('${answer.en}')">🔊 הקליפה מדברת</button></div><div class="card-grid">${answerOptions(answer, 6).map(word => `<button class="card" onclick="matchChoice('${word.en}')"><span class="emoji">${word.emoji}</span>${state.mode === "reader" ? `<span class="english">${word.en}</span>` : ""}</button>`).join("")}</div><div id="feedback" class="feedback"></div><div class="status-row"><span class="status-chip">${round + 1} / 4</span></div>`);
-  window.matchChoice = choice => { if (choice === answer.en) { round++; if(round === 4) return finish(1); feedback("זוג מושלם!", true); answer=shuffle(words)[0]; setTimeout(render,650); } else feedback("כמעט — הקשיבו לקליפה שוב."); }; render();
-}
-function wordBuilder() {
-  const target = "girl"; let picked = [];
-  const render = () => activity("Level 3", "מסר בבקבוק", `<p class="instruction">בנו את המילה מהאותיות.</p><div class="prompt english"><span class="emoji">👧</span>${picked.length ? picked.join("") : "_ _ _ _"}</div><div class="tile-bank english">${shuffle(target.split("")).map((letter, i) => `<button class="tile" onclick="letter('${letter}',${i})">${letter.toUpperCase()}</button>`).join("")}</div><div id="feedback" class="feedback"></div>`);
-  window.letter = letter => { picked.push(letter); if(picked.join("") === target) { feedback("You built GIRL!", true); speak("girl"); return setTimeout(()=>finish(2), 900); } if(!target.startsWith(picked.join(""))) { picked=[]; feedback("נסו שוב — האות חזרה לבקבוק."); } render(); }; render();
-}
-function soundMatch() {
-  const target = { en:"boy", emoji:"👦" }; activity("Level 3", "אוזני התוכי", `<p class="instruction">איזו תמונה מתחילה כמו <span class="english">b-b-boy</span>?</p><div class="prompt"><button class="primary english" onclick="speak('b b boy')">🔊 b-b-boy</button></div><div class="card-grid"><button class="card" onclick="soundChoice(false)"><span class="emoji">🐱</span></button><button class="card" onclick="soundChoice(true)"><span class="emoji">${target.emoji}</span></button><button class="card" onclick="soundChoice(false)"><span class="emoji">🌞</span></button></div><div id="feedback" class="feedback"></div>`); window.soundChoice = good => { if(good) { feedback("נכון! Boy מתחיל ב־B!",true); speak("boy"); setTimeout(()=>finish(2),800); } else feedback("הקשיבו שוב לתחילת המילה."); };
-}
-function listenDo() {
-  const command = { text:"Wave to the girl!", emoji:"👧" }; activity("Level 4", "התוכי אומר", `<p class="instruction">הקשיבו לפקודה ובחרו מה לעשות.</p><div class="prompt english"><span class="emoji">🦜</span>${command.text}<br><button class="secondary" onclick="speak('${command.text}')">🔊 שוב</button></div><div class="choice-grid"><button class="choice" onclick="doChoice(false)"><span class="emoji">👦</span><span>Wave to the boy</span></button><button class="choice" onclick="doChoice(true)"><span class="emoji">${command.emoji}</span><span>Wave to the girl</span></button><button class="choice" onclick="doChoice(false)"><span class="emoji">🧑‍🏫</span><span>Walk to the teacher</span></button></div><div id="feedback" class="feedback"></div>`); window.doChoice = good => { if(good) { feedback("ביצעתם את הפקודה!", true); setTimeout(()=>finish(3),750); } else { feedback("התוכי מצביע ומנסה שוב."); speak(command.text); } }; setTimeout(()=>speak(command.text),200);
-}
-function bridge() {
-  const tiles = ["I", "am", "happy"]; let picked = [];
-  const render = () => activity("Level 5", "גשר המילים", `<p class="instruction">הניחו את המילים לפי הסדר. הגשר צריך את קרש ה־<span class="english">am</span> שלו!</p><div class="bridge">🪨 ━ <span>${picked.includes("I") ? "I" : "□"}</span> ━ <span class="gap">${picked.includes("am") ? "am" : ""}</span> ━ <span>${picked.includes("happy") ? "happy" : "□"}</span> ━ 🏝️</div><div class="tile-bank english">${shuffle(tiles.filter(tile => !picked.includes(tile))).map(tile => `<button class="tile ${tile === "am" ? "selected" : ""}" onclick="bridgeTile('${tile}')">${tile}</button>`).join("")}</div><div class="english sentence">${picked.join(" ") || "Choose a word"}</div><p style="text-align:center"><button class="primary" onclick="checkBridge()">GO! ⛵</button></p><div id="feedback" class="feedback"></div>`);
-  window.bridgeTile = tile => { picked.push(tile); render(); };
-  window.checkBridge = () => { if(picked.join(" ") === "I am happy") { feedback("The bridge is strong! I am happy!",true); speak("I am happy"); setTimeout(()=>finish(4),900); } else if(!picked.includes("am")) { picked = []; render(); feedback("אוי! חסר קרש. I ... AM ... happy!"); speak("I am happy"); } else { picked = []; render(); feedback("בואו נבנה לפי הסדר: I am happy."); speak("I am happy"); } }; render();
-}
-function treasureDive() {
-  let round = 0; let answer = shuffle(words)[0];
-  const render = () => activity("Level 6", "צלילת אוצר", `<p class="instruction">הבועה מחזיקה מילה ישנה. הקשיבו, ואז מצאו את האוצר הנכון.</p><div class="prompt"><span class="emoji">🫧💎</span><button class="primary english" onclick="speak('${answer.en}')">🔊 Listen</button></div><div class="card-grid">${answerOptions(answer, 5).map(word=>`<button class="card" onclick="diveChoice('${word.en}')"><span class="emoji">${word.emoji}</span>${state.mode === "reader" ? `<span class="english">${word.en}</span>` : ""}</button>`).join("")}</div><div id="feedback" class="feedback"></div><div class="status-row"><span class="status-chip">אוצר ${round + 1} / 3</span></div>`);
-  window.diveChoice = choice => { if(choice===answer.en) { round++; if(round===3) return finish(5); feedback("האוצר נוצץ!",true); answer=shuffle(words)[0]; setTimeout(render,650); } else feedback("הבועה מחכה — נסו להקשיב שוב."); }; render();
-}
-function boss() {
-  const turns = [
-    { npc:"Ahoy! Hello!", options:["Hello!","Goodbye!"], good:"Hello!" },
-    { npc:"What's your name?", options:["My name is Captain!","Goodbye!"], good:"My name is Captain!" },
-    { npc:"How are you?", options:["I'm happy!","I happy"], good:"I'm happy!" },
-    { npc:"Who is this?", options:["This is my friend!","This friend"], good:"This is my friend!" },
-    { npc:"Welcome to Name Island! Goodbye!", options:["Goodbye!","Hello!"], good:"Goodbye!" }
-  ]; let turn = 0;
-  const render = () => { const current=turns[turn]; activity("Level 7", "דברו עם קפטן מורגן", `<div class="boss panel"><figure>🏴‍☠️</figure><p class="instruction">בחרו תשובה. אפשר גם לחזור בקול אחרי הקפטן.</p><div class="prompt english">${current.npc}<br><button class="secondary" onclick="speak(${esc(JSON.stringify(current.npc))})">🔊 Hear Captain Morgan</button></div><div class="choice-grid">${shuffle(current.options).map(option=>`<button class="choice english" onclick="bossChoice('${option.replace(/'/g,"\\'")}')">${option}</button>`).join("")}</div><div id="feedback" class="feedback"></div><p style="text-align:center"><button class="secondary" onclick="speak(${esc(JSON.stringify(current.good))})">🎤 Say it with me</button></p></div>`, "boss"); };
-  window.bossChoice = choice => { const current=turns[turn]; if(choice===current.good) { feedback("Wonderful!",true); speak(choice); turn++; if(turn===turns.length) return setTimeout(()=>finish(6),700); setTimeout(render,700); } else { feedback("הקפטן מחייך: בואו נגיד את זה יחד."); speak(current.good); } }; render();
+  const currentIndex = currentUnitIndex();
+  const cards = CONTENT.map((unit, index) => {
+    const unlocked = unitUnlocked(index);
+    const progress = getProgress(unit.id);
+    const done = isComplete(unit.id);
+    const percent = Math.round(progress / unit.missions.length * 100);
+    return `<button class="unit-card ${done ? "done" : ""} ${unlocked ? "" : "locked"}" ${unlocked ? `onclick="showUnit('${unit.id}')"` : "disabled"}><span class="unit-icon">${done ? "✅" : unit.icon}</span><span class="unit-copy"><b>${esc(unit.nameHe)}</b><small class="english">${esc(unit.nameEn)}</small><small>${done ? "הושלם" : unlocked ? `<bdi>${progress} / ${unit.missions.length}</bdi> משימות` : "ייפתח אחרי היחידה הקודמת"}</small></span><span class="unit-percent">${percent}%</span></button>`;
+  }).join("");
+  const foundationDone = CONTENT.filter(unit => unit.world === "foundations" && isComplete(unit.id)).length;
+  shell(`<section class="panel world-panel"><div class="world-heading"><div><p class="eyebrow">The Launching Cove</p><h2>מפת ההתחלה</h2><p>בנו את הסירה, האירו את המגדלור ואז הפליגו לאי השמות.</p></div><button class="secondary" onclick="showWelcome()">שינוי מסלול</button></div><div class="voyage-progress"><span>יסודות ${foundationDone} / 6</span><div class="meter"><span style="width:${foundationDone / 6 * 100}%"></span></div></div><div class="world-route">${cards}</div><div class="map-actions"><button class="secondary" onclick="resetGame()">התחלה חדשה</button><span>המשימה הבאה: ${esc(CONTENT[currentIndex].nameHe)}</span></div></section>`);
 }
 
-showWelcome();
+function showUnit(unitId) {
+  const unit = UNIT_BY_ID[unitId];
+  const index = CONTENT.indexOf(unit);
+  if (!unit || !unitUnlocked(index)) return showWorld();
+  const progress = getProgress(unit.id);
+  const done = isComplete(unit.id);
+  const nodes = unit.missions.map((mission, missionIndex) => {
+    const available = done || missionIndex <= progress;
+    const complete = missionIndex < progress || done;
+    return `<button class="level-node ${complete ? "done" : ""} ${available ? "" : "locked"}" ${available ? `onclick="startMission('${unit.id}',${missionIndex})"` : "disabled"}><span>${complete ? "✅" : mission.icon}</span><small>${missionIndex + 1}</small><small>${esc(mission.nameHe)}</small></button>`;
+  }).join("");
+  const percent = Math.round(progress / unit.missions.length * 100);
+  shell(`<section class="panel"><div class="island-hero ${unit.world === "foundations" ? "foundation-hero" : ""}"><p class="eyebrow english">${esc(unit.nameEn)}</p><h2>${esc(unit.nameHe)}</h2><p>${esc(unit.summaryHe)}</p><button class="primary" onclick="startMission('${unit.id}',${done ? 0 : activeMission(unit)})">${done ? "שחקו שוב" : "המשיכו"}</button></div><div class="mastery"><div class="mastery-label"><span>התקדמות ביחידה</span><span>${percent}%</span></div><div class="meter"><span style="width:${percent}%"></span></div></div><div class="level-path ${unit.missions.length <= 5 ? "short-path" : ""}">${nodes}</div></section>`, { back: true });
+}
+
+function startMission(unitId, missionIndex) {
+  const unit = UNIT_BY_ID[unitId];
+  if (!unit || missionIndex < 0 || missionIndex >= unit.missions.length) return showWorld();
+  const progress = getProgress(unitId);
+  if (!isComplete(unitId) && missionIndex > progress) return showUnit(unitId);
+  session = { unitId, missionIndex, round: 0, selected: [], collected: [], mistakes: 0 };
+  renderMission();
+}
+
+function activityFrame(mission, body, extra = "") {
+  const unit = UNIT_BY_ID[session.unitId];
+  shell(`<section class="panel activity-panel ${extra}"><div class="screen-header"><button class="secondary" onclick="showUnit('${unit.id}')">↩ חזרה</button><div class="activity-top"><div class="activity-kicker">${esc(unit.nameHe)} · ${session.missionIndex + 1}/${unit.missions.length}</div><h2>${mission.icon} ${esc(mission.nameHe)}</h2></div><button class="help-button" aria-label="השמעת ההוראה" onclick="speak(${jsArg(instructionAudio(mission))})">🔊</button></div><p class="instruction">${esc(mission.instructionHe)}</p>${body}<div id="feedback" class="feedback" aria-live="assertive"></div></section>`, { back: true });
+}
+
+function instructionAudio(mission) {
+  if (mission.kind === "choice" || mission.kind === "checkpoint") return mission.rounds?.[session?.round || 0]?.say || "Listen and choose";
+  if (mission.kind === "collect") return "Tap and listen";
+  if (mission.kind === "sequence") return mission.say || mission.result;
+  if (mission.kind === "dialogue") return mission.turns?.[session?.round || 0]?.npc || "Hello";
+  return "Listen";
+}
+
+function renderMission() {
+  const base = UNIT_BY_ID[session.unitId].missions[session.missionIndex];
+  const mission = modeMission(base);
+  const renderer = RENDERERS[mission.kind];
+  if (!renderer) return activityFrame(mission, `<p>המשימה עדיין לא זמינה.</p>`);
+  renderer(mission);
+}
+
+function optionCard(option, handler = "chooseAnswer") {
+  const text = state.mode === "reader" ? `<span class="english option-label">${esc(option.label || option.id)}</span>` : `<span class="listen-label">🔊</span>`;
+  return `<button class="card" data-answer="${esc(option.id)}" onclick="${handler}(${jsArg(option.id)})"><span class="emoji">${option.emoji}</span>${text}</button>`;
+}
+
+const RENDERERS = {
+  choice(mission) { renderChoice(mission); },
+  checkpoint(mission) { renderChoice(mission, true); },
+  collect(mission) {
+    const remaining = mission.items.filter(item => !session.collected.includes(item.id));
+    const cards = mission.items.map(item => `<button class="card ${session.collected.includes(item.id) ? "collected" : ""}" onclick="collectItem(${jsArg(item.id)})"><span class="emoji">${item.emoji}</span>${state.mode === "reader" ? `<span class="english option-label">${esc(item.label)}</span>` : `<span>${session.collected.includes(item.id) ? "✓" : "🔊"}</span>`}</button>`).join("");
+    activityFrame(mission, `<div class="prompt"><span class="emoji">${remaining.length ? "🦜" : "✨"}</span><span>${remaining.length ? `נשארו ${remaining.length}` : "שמענו את כולם!"}</span></div><div class="card-grid">${cards}</div><div class="status-row"><span class="status-chip english">${session.collected.length} / ${mission.items.length}</span></div>`);
+  },
+  sequence(mission) {
+    const used = session.selected.map(entry => entry.index);
+    const available = shuffle(mission.target.map((token, index) => ({ token, index })).filter(entry => !used.includes(entry.index)));
+    activityFrame(mission, `<div class="prompt english"><span class="emoji">${mission.picture || "🧩"}</span><button class="secondary" onclick="speak(${jsArg(mission.say || mission.result)})">🔊 Listen</button></div><div class="sentence english">${session.selected.length ? session.selected.map(entry => esc(entry.token)).join(" ") : "_ _ _"}</div><div class="tile-bank english">${available.map(entry => `<button class="tile" onclick="selectToken(${jsArg(entry.token)},${entry.index})">${esc(entry.token)}</button>`).join("")}</div><p class="center"><button class="primary" onclick="checkSequence()">בדיקה ✓</button> <button class="secondary" onclick="clearSequence()">ניקוי</button></p>`);
+  },
+  flag(mission) {
+    activityFrame(mission, `<div class="prompt"><span class="emoji">${state.flag || "⛵"}</span><span>${state.flag ? "הדגל מוכן!" : "בחרו סמל"}</span></div><div class="flag-grid">${mission.flags.map(flag => `<button class="flag ${state.flag === flag ? "selected" : ""}" onclick="chooseFlag(${jsArg(flag)})">${flag}</button>`).join("")}</div><p class="center"><button class="primary" ${state.flag ? "" : "disabled"} onclick="finishFlag()">Goodbye! 👋</button></p>`);
+  },
+  case(mission) {
+    const pair = mission.pairs[session.round];
+    const options = shuffle(mission.pairs.map(candidate => candidate[1]));
+    activityFrame(mission, `<div class="prompt english"><span class="case-letter">${esc(pair[0])}</span></div><div class="choice-grid english">${options.map(letter => `<button class="choice case-choice" onclick="chooseCase(${jsArg(letter)})">${esc(letter)}</button>`).join("")}</div><div class="status-row"><span class="status-chip english">${session.round + 1} / ${mission.pairs.length}</span></div>`);
+  },
+  dialogue(mission) {
+    const turn = mission.turns[session.round];
+    activityFrame(mission, `<div class="boss-scene"><figure>🏴‍☠️</figure><div class="prompt english">${esc(turn.npc)}<br><button class="secondary" onclick="speak(${jsArg(turn.npc)})">🔊 Hear Captain Morgan</button></div></div><div class="choice-grid">${shuffle(turn.options).map(option => `<button class="choice english" onclick="chooseDialogue(${jsArg(option)})">${esc(option)}</button>`).join("")}</div><p class="center"><button class="secondary" onclick="speak(${jsArg(turn.good)})">🎤 Say it with me</button></p><div class="status-row"><span class="status-chip english">${session.round + 1} / ${mission.turns.length}</span></div>`, "boss");
+  }
+};
+
+function renderChoice(mission, checkpoint = false) {
+  const round = mission.rounds[session.round];
+  const options = shuffle(round.options);
+  const visiblePrompt = state.mode === "reader" ? `<span id="spoken" class="english">${esc(round.say)}</span>` : `<span>הקשיבו</span>`;
+  activityFrame(mission, `<div class="prompt ${checkpoint ? "checkpoint-prompt" : ""}"><span class="emoji">${checkpoint ? "💡" : "🦜"}</span>${visiblePrompt}<br><button class="secondary" onclick="speak(${jsArg(round.say)})">🔊 שמעו שוב</button></div><div class="card-grid">${options.map(option => optionCard(option)).join("")}</div><div class="status-row"><span class="status-chip english">${session.round + 1} / ${mission.rounds.length}</span>${checkpoint ? `<span class="status-chip">אורות <bdi>${session.round} / ${mission.rounds.length}</bdi></span>` : ""}</div>`);
+  setTimeout(() => speak(round.say), 180);
+}
+
+function feedback(message, good = false) {
+  const node = document.querySelector("#feedback");
+  if (!node) return;
+  node.textContent = message;
+  node.className = `feedback ${good ? "good" : "try"}`;
+}
+
+function chooseAnswer(choice) {
+  const mission = modeMission(UNIT_BY_ID[session.unitId].missions[session.missionIndex]);
+  const round = mission.rounds[session.round];
+  if (choice !== round.answer) {
+    session.mistakes++;
+    state.attempts[mission.id] = (state.attempts[mission.id] || 0) + 1;
+    saveState();
+    feedback("כמעט. הקשיבו שוב ונסו עוד פעם.");
+    speak(round.say);
+    return;
+  }
+  feedback("מעולה!", true);
+  speak(round.options.find(option => option.id === choice)?.audio || round.say);
+  session.round++;
+  if (session.round >= mission.rounds.length) return setTimeout(completeMission, 500);
+  setTimeout(renderMission, 500);
+}
+
+function collectItem(itemId) {
+  const mission = modeMission(UNIT_BY_ID[session.unitId].missions[session.missionIndex]);
+  const item = mission.items.find(candidate => candidate.id === itemId);
+  if (!item) return;
+  if (!session.collected.includes(itemId)) session.collected.push(itemId);
+  speak(item.audio);
+  if (session.collected.length >= mission.items.length) {
+    renderMission();
+    feedback("כל האורות דולקים!", true);
+    return setTimeout(completeMission, 650);
+  }
+  renderMission();
+  feedback("יופי! המשיכו לפריט הבא.", true);
+}
+
+function selectToken(token, index) { if (!session.selected.some(entry => entry.index === index)) session.selected.push({ token, index }); renderMission(); }
+function clearSequence() { session.selected = []; renderMission(); }
+function checkSequence() {
+  const mission = modeMission(UNIT_BY_ID[session.unitId].missions[session.missionIndex]);
+  const answer = session.selected.map(entry => entry.token).join(" ");
+  const target = mission.target.join(" ");
+  if (answer === target) { feedback(`${mission.result || target} — מצוין!`, true); speak(mission.result || target); return setTimeout(completeMission, 600); }
+  session.mistakes++;
+  session.selected = [];
+  renderMission();
+  feedback("הצלילים חזרו למקום. הקשיבו ובנו משמאל לימין.");
+  speak(mission.say || mission.result);
+}
+
+function chooseFlag(flag) { state.flag = flag; saveState(); renderMission(); speak("My flag"); }
+function finishFlag() { if (state.flag) { speak("Goodbye!"); completeMission(); } }
+
+function chooseCase(letter) {
+  const mission = modeMission(UNIT_BY_ID[session.unitId].missions[session.missionIndex]);
+  const pair = mission.pairs[session.round];
+  if (letter !== pair[1]) { feedback("נסו שוב. חפשו את אותה צורה גדולה."); return; }
+  speak(`${pair[0]}, ${pair[1]}`);
+  session.round++;
+  if (session.round >= mission.pairs.length) return setTimeout(completeMission, 450);
+  renderMission();
+}
+
+function chooseDialogue(choice) {
+  const mission = modeMission(UNIT_BY_ID[session.unitId].missions[session.missionIndex]);
+  const turn = mission.turns[session.round];
+  if (choice !== turn.good) { feedback("הקפטן מדגים את התשובה. נסו אותה יחד."); speak(turn.good); return; }
+  feedback("Wonderful!", true);
+  speak(choice);
+  session.round++;
+  if (session.round >= mission.turns.length) return setTimeout(completeMission, 550);
+  setTimeout(renderMission, 500);
+}
+
+function completeMission() {
+  const unit = UNIT_BY_ID[session.unitId];
+  const completedIndex = session.missionIndex;
+  const firstCompletion = getProgress(unit.id) === completedIndex;
+  if (firstCompletion) {
+    state.progress[unit.id] = completedIndex + 1;
+    state.coins += 10;
+    if (state.progress[unit.id] === unit.missions.length) {
+      state.coins += unit.reward;
+      state.pearls += 1;
+    }
+    saveState();
+  }
+  const unitDone = isComplete(unit.id);
+  const nextIndex = CONTENT.indexOf(unit) + 1;
+  const nextUnit = CONTENT[nextIndex];
+  shell(`<section class="panel completion"><div class="hero-art">${unitDone ? "🏆✨🦜" : "✨🪙✨"}</div><h2>${unitDone ? `${esc(unit.nameHe)} הושלם!` : "כל הכבוד, חברי צוות!"}</h2><p class="lead">${unitDone ? `הרווחתם פנינה ופתחתם את ${nextUnit ? esc(nextUnit.nameHe) : "הים הבא"}.` : `המשימה נשמרה. ${firstCompletion ? "קיבלתם 10 מטבעות." : "תרגול חוזר תמיד זמין."}`}</p><div class="completion-actions">${!unitDone ? `<button class="primary" onclick="startMission('${unit.id}',${Math.min(completedIndex + 1, unit.missions.length - 1)})">למשימה הבאה</button>` : nextUnit ? `<button class="primary" onclick="showUnit('${nextUnit.id}')">אל ${esc(nextUnit.nameHe)}</button>` : ""}<button class="secondary" onclick="showWorld()">למפה</button></div></section>`, { back: true });
+}
+
+function validateContent() {
+  const errors = [];
+  const ids = new Set();
+  for (const unit of CONTENT) {
+    if (ids.has(unit.id)) errors.push(`Duplicate unit ${unit.id}`);
+    ids.add(unit.id);
+    unit.missions.forEach(mission => {
+      if (ids.has(mission.id)) errors.push(`Duplicate mission ${mission.id}`);
+      ids.add(mission.id);
+      for (const variant of [mission, mission.preVariant].filter(Boolean)) {
+        if (["choice", "checkpoint"].includes(variant.kind)) {
+          variant.rounds?.forEach((round, index) => {
+            if (!round.options.some(option => option.id === round.answer)) errors.push(`${mission.id} round ${index + 1}: answer missing`);
+          });
+        }
+        if (variant.kind === "dialogue") variant.turns?.forEach((turn, index) => {
+          if (!turn.options.includes(turn.good)) errors.push(`${mission.id} turn ${index + 1}: response missing`);
+        });
+      }
+    });
+  }
+  const foundationCount = CONTENT.filter(unit => unit.world === "foundations").reduce((sum, unit) => sum + unit.missions.length, 0);
+  if (foundationCount !== 26) errors.push(`Expected 26 foundation missions, found ${foundationCount}`);
+  return errors;
+}
+
+window.PirateSeas = { CONTENT, UNIT_BY_ID, freshState, validateContent, modeMission, startMission, showWorld, showUnit, resetGame, getState: () => state, setState: next => { state = next; } };
+state.mode ? showWorld() : showWelcome();
