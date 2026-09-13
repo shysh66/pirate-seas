@@ -10,8 +10,11 @@ Pirate Seas is a browser-based English-learning game for Hebrew-speaking childre
 - Name Island rebuilt as a seven-mission content pack using the same activity framework.
 - Sequential unlocks, replayable completed missions, coins, unit pearls, local persistence, and migration from the earlier prototype save.
 - Hebrew RTL interface with isolated LTR English content.
+- Per-item receptive, literacy, and guided-production evidence with a due-review dock; completion is kept separate from remembered knowledge.
+- Idempotent mission and unit reward transactions with stable attempt IDs.
+- A vendor-neutral recorded-audio manifest and player with slower device speech as the fallback.
 
-The app remains a prototype. Browser speech synthesis is temporary; production requires reviewed human recordings and artwork. Completing screens is not presented as evidence of CEFR proficiency.
+The app remains a prototype. The audio inventory is ready, but its reviewed neural or human MP3 files still need to be produced; device speech remains the fallback. Production also requires reviewed artwork. Completing screens is not presented as evidence of CEFR proficiency.
 
 ## Run locally
 
@@ -21,10 +24,11 @@ Run the automated checks with:
 
 ```bash
 node --check app.js
+node scripts/build-audio-manifest.cjs --check
 node tests/smoke.cjs
 ```
 
-The smoke suite validates the content contract, all 33 implemented missions, the combined learning track, activity variety, progression, persistence, retry behavior, rewards, and generated inline handlers.
+The checks validate the 123-clip audio inventory, content contract, all 33 implemented missions, combined learning track, activity variety, item evidence, spaced review, transactional rewards, progression, persistence, retry behavior, and generated inline handlers.
 
 ## Documents
 
@@ -36,4 +40,4 @@ The smoke suite validates the content contract, all 33 implemented missions, the
 
 ## Next milestone
 
-Review the foundation phonics sequence and recordings with an early-literacy/English specialist, replace speech synthesis with recorded assets, and use the reusable unit contract to implement Rainbow Reef.
+Finish M1 by producing and reviewing the inventoried neural audio files and running a repeat tablet playtest. Then use the reusable unit contract to implement Rainbow Reef.
