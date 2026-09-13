@@ -6,14 +6,14 @@ const L = (id, emoji, sound, name = id.toUpperCase()) => O(id, emoji, sound, nam
 
 const CONTENT = [
   {
-    id: "F00", world: "foundations", icon: "⚓", nameHe: "נמל ברוכים הבאים", nameEn: "Welcome Harbor",
+    id: "F00", world: "foundations", icon: "⚓", nameHe: "נמל ההתחלה", nameEn: "Starting Harbor",
     summaryHe: "פוגשים את התוכי ולומדים להקשיב, לבחור, לנוע ולעצור.", reward: 20,
     missions: [
       { id: "F00-M01", icon: "👋", nameHe: "שלום, תוכי!", kind: "choice", instructionHe: "התוכי אומר Hello. געו ביד שמנופפת.", rounds: [
         { say: "Hello!", answer: "hello", options: [O("hello", "👋", "Hello!"), O("boat", "⛵", "Boat"), O("parrot", "🦜", "Parrot")] }
       ] },
       { id: "F00-M02", icon: "🔊", nameHe: "בודקים את הצליל", kind: "collect", instructionHe: "געו בכל תמונה. התוכי ישמיע את המילה.", items: [O("listen", "👂", "Listen"), O("look", "👀", "Look"), O("yes", "👍", "Yes"), O("no", "👎", "No")] },
-      { id: "F00-M03", icon: "⛵", nameHe: "הסירה זזה", kind: "choice", instructionHe: "הקשיבו ועזרו לסירה לנוע או לעצור.", rounds: [
+      { id: "F00-M03", icon: "⛵", nameHe: "הסירה זזה", kind: "sail", instructionHe: "הקשיבו לפקודה והפעילו את הסירה: הפליגו או הטילו עוגן.", rounds: [
         { say: "Go!", answer: "go", options: [O("go", "▶️", "Go"), O("stop", "⏹️", "Stop")] },
         { say: "Stop!", answer: "stop", options: [O("go", "▶️", "Go"), O("stop", "⏹️", "Stop")] },
         { say: "Go!", answer: "go", options: [O("go", "▶️", "Go"), O("stop", "⏹️", "Stop")] }
@@ -55,15 +55,21 @@ const CONTENT = [
     id: "F03", world: "foundations", icon: "🌊", nameHe: "לגונת התנועות", nameEn: "Short-Vowel Lagoon",
     summaryHe: "מבדילים בין תנועות קצרות ומשנים צליל אחד במילה.", reward: 25,
     missions: [
-      { id: "F03-M01", icon: "👂", nameHe: "e או u", kind: "choice", instructionHe: "הקשיבו למילה ובחרו את התמונה.", rounds: [
-        { say: "pen", answer: "pen", options: [O("pen", "🖊️", "pen"), O("sun", "☀️", "sun")] },
-        { say: "sun", answer: "sun", options: [O("pen", "🖊️", "pen"), O("sun", "☀️", "sun")] }
+      { id: "F03-M01", icon: "🧺", nameHe: "e או u", kind: "sort", instructionHe: "בחרו תמונה ואז הניחו אותה בסל של הצליל e או u.", buckets: [
+        { id: "e", label: "e", emoji: "🥚" }, { id: "u", label: "u", emoji: "☂️" }
+      ], items: [
+        { id: "pen", emoji: "🖊️", label: "pen", audio: "pen", bucket: "e" },
+        { id: "bed", emoji: "🛏️", label: "bed", audio: "bed", bucket: "e" },
+        { id: "hen", emoji: "🐔", label: "hen", audio: "hen", bucket: "e" },
+        { id: "sun", emoji: "☀️", label: "sun", audio: "sun", bucket: "u" },
+        { id: "run", emoji: "🏃", label: "run", audio: "run", bucket: "u" },
+        { id: "cup", emoji: "🥤", label: "cup", audio: "cup", bucket: "u" }
       ] },
       { id: "F03-M02", icon: "🪷", nameHe: "r · h · b", kind: "collect", instructionHe: "געו בפרחים ושמעו צליל ומילה.", items: [L("r", "🏃", "r, run"), L("h", "🎩", "h, hat"), L("b", "🛏️", "b, bed")] },
       { id: "F03-M03", icon: "🪷", nameHe: "f · l", kind: "collect", instructionHe: "השלימו את גינת הצלילים.", items: [L("f", "🐟", "f, fish"), L("l", "🦁", "l, lion"), L("e", "🥚", "e, egg"), L("u", "☂️", "u, umbrella")] },
-      { id: "F03-M04", icon: "🪄", nameHe: "מחליפים צליל", kind: "choice", instructionHe: "המילה משתנה בצליל אחד. בחרו את התמונה החדשה.", rounds: [
-        { say: "hat. Change a to o. hot.", answer: "hot", options: [O("hat", "🎩", "hat"), O("hot", "🥵", "hot"), O("bed", "🛏️", "bed")] },
-        { say: "pen. Change p to h. hen.", answer: "hen", options: [O("pen", "🖊️", "pen"), O("hen", "🐔", "hen"), O("sun", "☀️", "sun")] }
+      { id: "F03-M04", icon: "🪄", nameHe: "מחליפים צליל", kind: "swap", instructionHe: "החליפו אות אחת במכונת המילים וצרו מילה חדשה.", rounds: [
+        { say: "hat. Change a to o. hot.", from: "hat", replaceIndex: 1, answer: "o", choices: ["o", "e", "u"], result: "hot", emoji: "🥵" },
+        { say: "pen. Change p to h. hen.", from: "pen", replaceIndex: 0, answer: "h", choices: ["h", "m", "t"], result: "hen", emoji: "🐔" }
       ] }
     ]
   },
@@ -91,9 +97,9 @@ const CONTENT = [
       ] },
       { id: "F05-M02", icon: "🧱", nameHe: "בונים cat", kind: "sequence", instructionHe: "שמעו ובנו cat משמאל לימין.", say: "c, a, t, cat", target: ["c", "a", "t"], picture: "🐱", result: "cat",
         preVariant: { kind: "choice", instructionHe: "שמעו cat ובחרו את התמונה.", rounds: [{ say: "cat", answer: "cat", options: [O("cat", "🐱", "cat"), O("dog", "🐶", "dog"), O("map", "🗺️", "map")] }] } },
-      { id: "F05-M03", icon: "🔁", nameHe: "משנים מילה", kind: "choice", instructionHe: "הקשיבו לשינוי ובחרו את התוצאה.", rounds: [
-        { say: "cat. Change c to h. hat.", answer: "hat", options: [O("cat", "🐱", "cat"), O("hat", "🎩", "hat"), O("hot", "🥵", "hot")] },
-        { say: "dog. Change d to l. log.", answer: "log", options: [O("dog", "🐶", "dog"), O("log", "🪵", "log"), O("map", "🗺️", "map")] }
+      { id: "F05-M03", icon: "🔁", nameHe: "משנים מילה", kind: "swap", instructionHe: "החליפו את האות הראשונה ובנו את המילה החדשה.", rounds: [
+        { say: "cat. Change c to h. hat.", from: "cat", replaceIndex: 0, answer: "h", choices: ["h", "m", "s"], result: "hat", emoji: "🎩" },
+        { say: "dog. Change d to l. log.", from: "dog", replaceIndex: 0, answer: "l", choices: ["l", "p", "c"], result: "log", emoji: "🪵" }
       ] },
       { id: "F05-M04", icon: "🖼️", nameHe: "משפט קטן", kind: "choice", instructionHe: "שמעו a red hat ובחרו את התמונה.", rounds: [{ say: "a red hat", answer: "red-hat", options: [O("red-hat", "🎩🔴", "a red hat", "a red hat"), O("red-cat", "🐱🔴", "a red cat", "a red cat"), O("hot-sun", "☀️🥵", "hot sun", "hot sun")] }] },
       { id: "F05-M05", icon: "🏆", nameHe: "מדליקים את המגדלור", kind: "checkpoint", instructionHe: "שלוש משימות קצרות ידליקו את המגדלור.", rounds: [
@@ -112,9 +118,11 @@ const CONTENT = [
         { say: "friend", answer: "friend", options: [O("friend", "🧑‍🤝‍🧑"), O("teacher", "🧑‍🏫"), O("girl", "👧")] },
         { say: "girl", answer: "girl", options: [O("boy", "👦"), O("girl", "👧"), O("friend", "🧑‍🤝‍🧑")] }
       ] },
-      { id: "P01-M02", icon: "🃏", nameHe: "זוגות של חברים", kind: "choice", instructionHe: "שמעו את הצדף ומצאו את התמונה.", rounds: [
-        { say: "boy", answer: "boy", options: [O("boy", "👦"), O("girl", "👧"), O("teacher", "🧑‍🏫")] },
-        { say: "goodbye", answer: "goodbye", options: [O("hello", "👋"), O("goodbye", "⛵"), O("friend", "🧑‍🤝‍🧑")] }
+      { id: "P01-M02", icon: "🃏", nameHe: "זוגות של חברים", kind: "memory", instructionHe: "הפכו שני קלפים בכל תור ומצאו זוג של תמונה ומילה.", pairs: [
+        { id: "boy", emoji: "👦", word: "boy" },
+        { id: "girl", emoji: "👧", word: "girl" },
+        { id: "teacher", emoji: "🧑‍🏫", word: "teacher" },
+        { id: "friend", emoji: "🧑‍🤝‍🧑", word: "friend" }
       ] },
       { id: "P01-M03", icon: "🔤", nameHe: "בונים girl", kind: "sequence", instructionHe: "סדרו את האותיות ובנו girl.", say: "girl", target: ["g", "i", "r", "l"], picture: "👧", result: "girl",
         preVariant: { kind: "choice", instructionHe: "איזו תמונה מתחילה בצליל b?", rounds: [{ say: "b, boy", answer: "boy", options: [O("boy", "👦"), O("cat", "🐱"), O("sun", "☀️")] }] } },
@@ -249,18 +257,28 @@ function startMission(unitId, missionIndex) {
   if (!unit || missionIndex < 0 || missionIndex >= unit.missions.length) return showWorld();
   const progress = getProgress(unitId);
   if (!isComplete(unitId) && missionIndex > progress) return showUnit(unitId);
-  session = { unitId, missionIndex, round: 0, selected: [], collected: [], mistakes: 0 };
+  session = { unitId, missionIndex, round: 0, selected: [], collected: [], sorted: [], activeItem: null, memoryDeck: null, flipped: [], matched: [], mistakes: 0 };
   renderMission();
 }
 
+const ACTIVITY_LABELS = {
+  choice: "משימת גילוי", checkpoint: "אתגר המגדלור", collect: "משימת חקר",
+  sail: "משימת ניווט", sort: "משימת מיון", sequence: "משימת בנייה",
+  flag: "משימת יצירה", case: "משימת התאמה", swap: "מכונת מילים",
+  memory: "משחק זיכרון", dialogue: "שיחה עם דמות"
+};
+
 function activityFrame(mission, body, extra = "") {
   const unit = UNIT_BY_ID[session.unitId];
-  shell(`<section class="panel activity-panel ${extra}"><div class="screen-header"><button class="secondary" onclick="showUnit('${unit.id}')">↩ חזרה</button><div class="activity-top"><div class="activity-kicker">${esc(unit.nameHe)} · ${session.missionIndex + 1}/${unit.missions.length}</div><h2>${mission.icon} ${esc(mission.nameHe)}</h2></div><button class="help-button" aria-label="השמעת ההוראה" onclick="speak(${jsArg(instructionAudio(mission))})">🔊</button></div><p class="instruction">${esc(mission.instructionHe)}</p>${body}<div id="feedback" class="feedback" aria-live="assertive"></div></section>`, { back: true });
+  shell(`<section class="panel activity-panel ${extra}" data-kind="${esc(mission.kind)}"><div class="screen-header"><button class="secondary" onclick="showUnit('${unit.id}')">↩ חזרה</button><div class="activity-top"><div class="activity-kicker">${esc(unit.nameHe)} · ${session.missionIndex + 1}/${unit.missions.length}</div><span class="activity-kind">${ACTIVITY_LABELS[mission.kind] || "משימה"}</span><h2>${mission.icon} ${esc(mission.nameHe)}</h2></div><button class="help-button" aria-label="השמעת ההוראה" onclick="speak(${jsArg(instructionAudio(mission))})">🔊</button></div><p class="instruction">${esc(mission.instructionHe)}</p>${body}<div id="feedback" class="feedback" aria-live="assertive"></div></section>`, { back: true });
 }
 
 function instructionAudio(mission) {
   if (mission.kind === "choice" || mission.kind === "checkpoint") return mission.rounds?.[session?.round || 0]?.say || "Listen and choose";
+  if (mission.kind === "sail" || mission.kind === "swap") return mission.rounds?.[session?.round || 0]?.say || "Listen";
   if (mission.kind === "collect") return "Tap and listen";
+  if (mission.kind === "sort") return "Sort the words";
+  if (mission.kind === "memory") return "Find the matching pairs";
   if (mission.kind === "sequence") return mission.say || mission.result;
   if (mission.kind === "dialogue") return mission.turns?.[session?.round || 0]?.npc || "Hello";
   return "Listen";
@@ -282,6 +300,12 @@ function optionCard(option, handler = "chooseAnswer") {
 const RENDERERS = {
   choice(mission) { renderChoice(mission); },
   checkpoint(mission) { renderChoice(mission, true); },
+  sail(mission) {
+    const round = mission.rounds[session.round];
+    const progress = Math.round(session.round / mission.rounds.length * 100);
+    activityFrame(mission, `<div class="sail-game"><div class="sail-command english"><small>Captain says</small><b>${esc(round.say)}</b><button class="secondary" onclick="speak(${jsArg(round.say)})">🔊</button></div><div class="sail-lane"><span class="sail-boat" style="--sail-progress:${progress}%">⛵</span><span class="sail-finish">🏝️</span></div><div class="helm-controls"><button class="helm-go" onclick="chooseSail('go')"><span>▶️</span><b class="english">GO</b></button><button class="helm-stop" onclick="chooseSail('stop')"><span>⚓</span><b class="english">STOP</b></button></div><div class="status-row"><span class="status-chip english">${session.round + 1} / ${mission.rounds.length}</span></div></div>`, "sail-activity");
+    setTimeout(() => speak(round.say), 180);
+  },
   collect(mission) {
     const remaining = mission.items.filter(item => !session.collected.includes(item.id));
     const cards = mission.items.map(item => `<button class="card ${session.collected.includes(item.id) ? "collected" : ""}" onclick="collectItem(${jsArg(item.id)})"><span class="emoji">${item.emoji}</span><span class="english option-label">${esc(item.label)}</span><small>${session.collected.includes(item.id) ? "✓" : "🔊 לחצו ושמעו"}</small></button>`).join("");
@@ -291,6 +315,31 @@ const RENDERERS = {
     const used = session.selected.map(entry => entry.index);
     const available = shuffle(mission.target.map((token, index) => ({ token, index })).filter(entry => !used.includes(entry.index)));
     activityFrame(mission, `<div class="prompt english"><span class="emoji">${mission.picture || "🧩"}</span><button class="secondary" onclick="speak(${jsArg(mission.say || mission.result)})">🔊 Listen</button></div><div class="sentence english">${session.selected.length ? session.selected.map(entry => esc(entry.token)).join(" ") : "_ _ _"}</div><div class="tile-bank english">${available.map(entry => `<button class="tile" onclick="selectToken(${jsArg(entry.token)},${entry.index})">${esc(entry.token)}</button>`).join("")}</div><p class="center"><button class="primary" onclick="checkSequence()">בדיקה ✓</button> <button class="secondary" onclick="clearSequence()">ניקוי</button></p>`);
+  },
+  sort(mission) {
+    const remaining = mission.items.filter(item => !session.sorted.includes(item.id));
+    const active = mission.items.find(item => item.id === session.activeItem);
+    const itemButtons = remaining.map(item => `<button class="sort-item ${session.activeItem === item.id ? "selected" : ""}" onclick="selectSortItem(${jsArg(item.id)})"><span>${item.emoji}</span><b class="english">${esc(item.label)}</b><small>🔊</small></button>`).join("");
+    const buckets = mission.buckets.map(bucket => `<button class="sound-bucket" ${active ? "" : "disabled"} onclick="chooseSortBucket(${jsArg(bucket.id)})"><span>${bucket.emoji}</span><b class="english">${esc(bucket.label)}</b><small>${session.sorted.filter(id => mission.items.find(item => item.id === id)?.bucket === bucket.id).length} בפנים</small></button>`).join("");
+    activityFrame(mission, `<div class="sort-workbench"><div class="sort-tray">${itemButtons || `<div class="tray-complete">✨ כל התמונות מוינו!</div>`}</div><div class="sort-arrow">${active ? `${active.emoji} ↓` : "בחרו תמונה"}</div><div class="bucket-grid">${buckets}</div><div class="status-row"><span class="status-chip">מוינו <bdi>${session.sorted.length} / ${mission.items.length}</bdi></span></div></div>`, "sort-activity");
+  },
+  swap(mission) {
+    const round = mission.rounds[session.round];
+    const before = [...round.from].map((letter, index) => `<span class="${index === round.replaceIndex ? "changing" : ""}">${esc(letter)}</span>`).join("");
+    const after = [...round.from].map((letter, index) => `<span class="${index === round.replaceIndex ? "word-gap" : ""}">${index === round.replaceIndex ? "?" : esc(letter)}</span>`).join("");
+    activityFrame(mission, `<div class="word-machine english"><div class="machine-word">${before}</div><div class="machine-gears">⚙️ ➜ ⚙️</div><div class="machine-result">${after} <i>${round.emoji}</i></div></div><button class="secondary listen-swap" onclick="speak(${jsArg(round.say)})">🔊 ${esc(round.say)}</button><div class="letter-parts english">${shuffle(round.choices).map(letter => `<button onclick="chooseSwap(${jsArg(letter)})">${esc(letter)}</button>`).join("")}</div><div class="status-row"><span class="status-chip english">${session.round + 1} / ${mission.rounds.length}</span></div>`, "swap-activity");
+    setTimeout(() => speak(round.say), 180);
+  },
+  memory(mission) {
+    if (!session.memoryDeck) session.memoryDeck = shuffle(mission.pairs.flatMap(pair => [
+      { key: `${pair.id}:picture`, pairId: pair.id, face: pair.emoji, word: pair.word, kind: "picture" },
+      { key: `${pair.id}:word`, pairId: pair.id, face: pair.word, word: pair.word, kind: "word" }
+    ]));
+    const cards = session.memoryDeck.map(card => {
+      const revealed = session.flipped.includes(card.key) || session.matched.includes(card.pairId);
+      return `<button class="memory-card ${revealed ? "revealed" : ""} ${session.matched.includes(card.pairId) ? "matched" : ""}" aria-label="${revealed ? esc(card.word) : "קלף סגור"}" onclick="flipMemory(${jsArg(card.key)})"><span class="${card.kind === "word" ? "english" : ""}">${revealed ? esc(card.face) : "❓"}</span></button>`;
+    }).join("");
+    activityFrame(mission, `<div class="memory-board">${cards}</div><div class="status-row"><span class="status-chip">זוגות <bdi>${session.matched.length} / ${mission.pairs.length}</bdi></span></div>`, "memory-activity");
   },
   flag(mission) {
     activityFrame(mission, `<div class="prompt"><span class="emoji">${state.flag || "⛵"}</span><span>${state.flag ? "הדגל מוכן!" : "בחרו סמל"}</span></div><div class="flag-grid">${mission.flags.map(flag => `<button class="flag ${state.flag === flag ? "selected" : ""}" onclick="chooseFlag(${jsArg(flag)})">${flag}</button>`).join("")}</div><p class="center"><button class="primary" ${state.flag ? "" : "disabled"} onclick="finishFlag()">Goodbye! 👋</button></p>`);
@@ -337,6 +386,92 @@ function chooseAnswer(choice) {
   session.round++;
   if (session.round >= mission.rounds.length) return setTimeout(completeMission, 500);
   setTimeout(renderMission, 500);
+}
+
+function chooseSail(action) {
+  const mission = modeMission(UNIT_BY_ID[session.unitId].missions[session.missionIndex]);
+  const round = mission.rounds[session.round];
+  if (action !== round.answer) {
+    session.mistakes++;
+    state.attempts[mission.id] = (state.attempts[mission.id] || 0) + 1;
+    saveState();
+    feedback(action === "go" ? "אופס, הקפטן ביקש לעצור ולהטיל עוגן." : "אופס, הקפטן ביקש להפליג קדימה.");
+    speak(round.say);
+    return;
+  }
+  feedback(action === "go" ? "הרוח במפרשים!" : "העוגן ירד בזמן!", true);
+  speak(action === "go" ? "Go!" : "Stop!");
+  session.round++;
+  if (session.round >= mission.rounds.length) return setTimeout(completeMission, 600);
+  setTimeout(renderMission, 500);
+}
+
+function selectSortItem(itemId) {
+  const mission = modeMission(UNIT_BY_ID[session.unitId].missions[session.missionIndex]);
+  const item = mission.items.find(candidate => candidate.id === itemId);
+  if (!item || session.sorted.includes(itemId)) return;
+  session.activeItem = itemId;
+  speak(item.audio || item.label);
+  renderMission();
+  feedback("עכשיו בחרו את סל הצליל.", true);
+}
+
+function chooseSortBucket(bucketId) {
+  const mission = modeMission(UNIT_BY_ID[session.unitId].missions[session.missionIndex]);
+  const item = mission.items.find(candidate => candidate.id === session.activeItem);
+  if (!item) return feedback("קודם בחרו תמונה מהמגש.");
+  if (item.bucket !== bucketId) {
+    session.mistakes++;
+    state.attempts[mission.id] = (state.attempts[mission.id] || 0) + 1;
+    saveState();
+    feedback("הקשיבו שוב ונסו את הסל השני.");
+    speak(item.audio || item.label);
+    return;
+  }
+  session.sorted.push(item.id);
+  session.activeItem = null;
+  renderMission();
+  feedback("בדיוק! התמונה נכנסה לסל הנכון.", true);
+  if (session.sorted.length >= mission.items.length) setTimeout(completeMission, 650);
+}
+
+function chooseSwap(letter) {
+  const mission = modeMission(UNIT_BY_ID[session.unitId].missions[session.missionIndex]);
+  const round = mission.rounds[session.round];
+  if (letter !== round.answer) {
+    session.mistakes++;
+    state.attempts[mission.id] = (state.attempts[mission.id] || 0) + 1;
+    saveState();
+    feedback("החלק לא מתאים למכונה. נסו אות אחרת.");
+    speak(round.say);
+    return;
+  }
+  feedback(`${round.result} — המכונה הצליחה!`, true);
+  speak(round.result);
+  session.round++;
+  if (session.round >= mission.rounds.length) return setTimeout(completeMission, 650);
+  setTimeout(renderMission, 550);
+}
+
+function flipMemory(cardKey) {
+  const mission = modeMission(UNIT_BY_ID[session.unitId].missions[session.missionIndex]);
+  const card = session.memoryDeck?.find(candidate => candidate.key === cardKey);
+  if (!card || session.matched.includes(card.pairId) || session.flipped.includes(cardKey) || session.flipped.length >= 2) return;
+  session.flipped.push(cardKey);
+  speak(card.word);
+  renderMission();
+  if (session.flipped.length < 2) return feedback("מצאו את בן הזוג של הקלף.", true);
+  const [first, second] = session.flipped.map(key => session.memoryDeck.find(candidate => candidate.key === key));
+  if (first.pairId === second.pairId && first.kind !== second.kind) {
+    session.matched.push(first.pairId);
+    session.flipped = [];
+    renderMission();
+    feedback("מצאנו זוג!", true);
+    if (session.matched.length >= mission.pairs.length) setTimeout(completeMission, 650);
+    return;
+  }
+  feedback("אלה לא בני זוג. זכרו איפה הם!");
+  setTimeout(() => { session.flipped = []; renderMission(); feedback("נסו זוג אחר."); }, 750);
 }
 
 function collectItem(itemId) {

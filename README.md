@@ -1,13 +1,12 @@
 # Pirate Seas — English Adventure
 
-Pirate Seas is a browser-based English-learning game for Hebrew-speaking children. The current build starts with no assumed English or Latin-alphabet knowledge and provides separate listening and reading paths.
+Pirate Seas is a browser-based English-learning game for Hebrew-speaking children. The current build starts with no assumed English or Latin-alphabet knowledge and combines listening and reading in one guided journey.
 
 ## Implemented now
 
-- Welcome Harbor as the first-run experience.
+- Starting Harbor (נמל ההתחלה) as the first-run experience.
 - The Launching Cove: six foundation units and 26 core missions.
-- Letter-sound introduction, listening choices, word blending, sequencing, case matching, and a foundations checkpoint.
-- Pre-reader substitutions for compulsory spelling and letter-matching activities.
+- Eleven activity types, including boat navigation, sound sorting, memory matching, word transformation, construction, dialogue, and checkpoints.
 - Name Island rebuilt as a seven-mission content pack using the same activity framework.
 - Sequential unlocks, replayable completed missions, coins, unit pearls, local persistence, and migration from the earlier prototype save.
 - Hebrew RTL interface with isolated LTR English content.
@@ -25,11 +24,11 @@ node --check app.js
 node tests/smoke.cjs
 ```
 
-The smoke suite validates the content contract, all 33 implemented missions, both learner paths, progression, persistence, retry behavior, rewards, and generated inline handlers.
+The smoke suite validates the content contract, all 33 implemented missions, the combined learning track, activity variety, progression, persistence, retry behavior, rewards, and generated inline handlers.
 
 ## Documents
 
-- [`docs/whole-game-design-abc-a2.md`](docs/whole-game-design-abc-a2.md): definitive journey from Welcome Harbor through A1, plus the A2 roadmap.
+- [`docs/whole-game-design-abc-a2.md`](docs/whole-game-design-abc-a2.md): definitive journey from Starting Harbor through A1, plus the A2 roadmap.
 - [`island-3-name-island-spec.md`](island-3-name-island-spec.md): original Name Island design input.
 - [`island-4-rainbow-reef-spec.md`](island-4-rainbow-reef-spec.md): Rainbow Reef design input.
 - [`tech-architecture.md`](tech-architecture.md): longer-term production architecture.
