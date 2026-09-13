@@ -6,7 +6,7 @@ This document expands and revises the existing curriculum, Island 3/4 specificat
 
 ## 1. Product decision and destination
 
-Every new learner starts at **Welcome Harbor**, with no assumed English, alphabet knowledge, reading direction, or knowledge of game controls. Name Island becomes the first *thematic* island after the foundations. It is no longer the starting screen for a fresh profile.
+Every new learner starts at **Starting Harbor (נמל ההתחלה)**, with no assumed English, alphabet knowledge, reading direction, or knowledge of game controls. Name Island becomes the first *thematic* island after the foundations. It is no longer the starting screen for a fresh profile.
 
 The game develops two related skills in parallel: understanding/using English, and reading/writing English. Knowing the alphabet is useful but does not itself demonstrate English proficiency. Children begin hearing and using meaningful English on day one; they do not have to memorize 26 letter names before saying hello.
 
@@ -78,7 +78,7 @@ Teach letter **sounds**, letter **names**, and letter **shapes** as distinct thi
 
 The proposed sound order is selected to allow useful short words early. A literacy specialist must review the exact recordings, word eligibility, and accent assumptions before production. Example words below must first be introduced orally and pictured. They cannot enter a decoding exercise solely because their letters have been taught.
 
-### F00 — Welcome Harbor: “Meet your parrot” · 4 missions
+### F00 — Starting Harbor (נמל ההתחלה): “Meet your parrot” · 4 missions
 
 **Outcome:** tap, listen, replay, choose, and stop without reading an instruction. **English:** hello, bye, yes, no; listen, look, go, stop as modeled control language.
 
@@ -498,7 +498,7 @@ Home items provide free retrieval: tap a lamp to hear lamp; arrange toys to prac
 
 F/P/A/B identifiers in this plan express sequence, not a demand to rename stored content. Preserve existing `island-003` and `island-004` identities; add a world manifest with explicit order and prerequisites. If Rainbow Reef becomes two units, map existing progress deliberately and do not copy earned rewards into both units.
 
-On first launch with a new profile, resolve the world manifest to Welcome Harbor. Existing prototype players should see their Name Island progress and a recommendation to explore the foundations; do not silently delete progress. The Continue button resumes an incomplete mission or the next accessible one.
+On first launch with a new profile, resolve the world manifest to Starting Harbor. Existing prototype players should see their Name Island progress and a recommendation to explore the foundations; do not silently delete progress. The Continue button resumes an incomplete mission or the next accessible one.
 
 ### Content contracts
 
@@ -537,7 +537,7 @@ Persist after each meaningful checkpoint. Completion, memory updates, and reward
 
 | Milestone | Deliverable | Exit criterion |
 |---|---|---|
-| M0 Correct entry and foundations | Profile flow, world manifest, Welcome Harbor, F01–F05 | A fresh child can start without reading and reach a meaningful first success |
+| M0 Correct entry and foundations | Profile flow, world manifest, Starting Harbor, F01–F05 | A fresh child can start without reading and reach a meaningful first success |
 | M1 Reliable reusable slice | Refactored Name Island, actual audio, SRS, evidence, transactional rewards | All missions completable in both modes; saved progress survives restart; no false mastery claims |
 | M2 Pre-A1 grammar/template proof | Split Rainbow/Counting, Toy, Animal islands | Paint, plural, quantity, placement, and exception handling work from content |
 | M3 Complete Calm Sea | P01–P12, literacy thread, P12 checkpoint | Full Pre-A1 path, content lint, controlled reader vocabulary, delayed review |
