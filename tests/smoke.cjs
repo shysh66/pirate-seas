@@ -34,6 +34,7 @@ assert.deepEqual(Array.from(api.validateContent()), [], 'Content contract must b
 assert.equal(api.CONTENT.filter(unit => unit.world === 'foundations').length, 6);
 assert.equal(api.CONTENT.filter(unit => unit.world === 'foundations').reduce((sum, unit) => sum + unit.missions.length, 0), 26);
 assert.equal(api.CONTENT.find(unit => unit.id === 'P01').missions.length, 7);
+assert(new Set(api.CONTENT.flatMap(unit => unit.missions.map(mission => mission.kind))).size >= 10, 'The journey should contain at least ten distinct activity types');
 assert.match(app.innerHTML, /מפת ההתחלה/, 'The game should open directly on the large map');
 assert.match(app.innerHTML, /מסלול משולב/);
 assert.doesNotMatch(app.innerHTML, /mode-title/, 'Separate track selection should be removed');
@@ -43,7 +44,8 @@ assert.match(app.innerHTML, /מקבלים צדף אחד/);
 validateHandlers();
 
 assert.match(app.innerHTML, /מפת ההתחלה/);
-assert.match(app.innerHTML, /נמל ברוכים הבאים/);
+assert.match(app.innerHTML, /נמל ההתחלה/);
+assert.doesNotMatch(app.innerHTML, /נמל ברוכים הבאים/, 'The first location should use its new name');
 assert.match(app.innerHTML, /אי השמות/);
 assert.match(app.innerHTML, /class="sea-map"/, 'Main screen should render a visual sea map');
 assert.match(app.innerHTML, /class="sea-route-lines"/, 'Visual map should connect locations with a route');
@@ -56,7 +58,12 @@ assert.match(app.innerHTML, /map-location location-1[^>]*locked[^>]*aria-disable
 for (const unit of api.CONTENT) {
   for (const base of unit.missions) {
     const mission = api.modeMission(base);
-    for (const round of mission.rounds || []) assert(round.options.some(option => option.id === round.answer), `${mission.id}: answer missing in combined track`);
+    if (['choice', 'checkpoint', 'sail'].includes(mission.kind)) {
+      for (const round of mission.rounds || []) assert(round.options.some(option => option.id === round.answer), `${mission.id}: answer missing in combined track`);
+    }
+    if (mission.kind === 'swap') for (const round of mission.rounds) assert(round.choices.includes(round.answer), `${mission.id}: replacement letter missing`);
+    if (mission.kind === 'sort') for (const item of mission.items) assert(mission.buckets.some(bucket => bucket.id === item.bucket), `${mission.id}: sorting bucket missing`);
+    if (mission.kind === 'memory') assert(mission.pairs.length >= 3, `${mission.id}: memory game needs several pairs`);
     for (const turn of mission.turns || []) assert(turn.options.includes(turn.good), `${mission.id}: dialogue answer missing`);
   }
 }
@@ -69,8 +76,15 @@ function finishAuthoredMission(unit, mission, index) {
   const active = api.modeMission(mission);
   if (active.kind === 'choice' || active.kind === 'checkpoint') {
     for (const round of active.rounds) run(`chooseAnswer(${JSON.stringify(round.answer)})`);
+  } else if (active.kind === 'sail') {
+    for (const round of active.rounds) run(`chooseSail(${JSON.stringify(round.answer)})`);
   } else if (active.kind === 'collect') {
     for (const item of active.items) run(`collectItem(${JSON.stringify(item.id)})`);
+  } else if (active.kind === 'sort') {
+    for (const item of active.items) {
+      run(`selectSortItem(${JSON.stringify(item.id)})`);
+      run(`chooseSortBucket(${JSON.stringify(item.bucket)})`);
+    }
   } else if (active.kind === 'sequence') {
     active.target.forEach((token, tokenIndex) => run(`selectToken(${JSON.stringify(token)}, ${tokenIndex})`));
     run('checkSequence()');
@@ -78,6 +92,13 @@ function finishAuthoredMission(unit, mission, index) {
     run(`chooseFlag(${JSON.stringify(active.flags[0])}); finishFlag()`);
   } else if (active.kind === 'case') {
     for (const pair of active.pairs) run(`chooseCase(${JSON.stringify(pair[1])})`);
+  } else if (active.kind === 'swap') {
+    for (const round of active.rounds) run(`chooseSwap(${JSON.stringify(round.answer)})`);
+  } else if (active.kind === 'memory') {
+    for (const pair of active.pairs) {
+      run(`flipMemory(${JSON.stringify(`${pair.id}:picture`)})`);
+      run(`flipMemory(${JSON.stringify(`${pair.id}:word`)})`);
+    }
   } else if (active.kind === 'dialogue') {
     for (const turn of active.turns) run(`chooseDialogue(${JSON.stringify(turn.good)})`);
   } else {
@@ -145,4 +166,21 @@ assert.match(app.innerHTML, /הניחו את הצלילים משמאל לימי�
 assert.match(app.innerHTML, /selectToken/);
 validateHandlers();
 
-console.log(`Passed: ${api.CONTENT.length} units, 33 missions, 26 foundation missions, combined learning track, persistence, retries, and inline handlers.`);
+run("state = freshState(); state.progress.F00 = 2; startMission('F00', 2)");
+assert.match(app.innerHTML, /data-kind="sail"/);
+assert.match(app.innerHTML, /class="helm-controls"/);
+
+run("state = freshState(); state.progress.F03 = 0; startMission('F03', 0)");
+assert.match(app.innerHTML, /data-kind="sort"/);
+assert.match(app.innerHTML, /class="bucket-grid"/);
+
+run("state = freshState(); state.progress.F03 = 3; startMission('F03', 3)");
+assert.match(app.innerHTML, /data-kind="swap"/);
+assert.match(app.innerHTML, /class="word-machine english"/);
+
+run("state = freshState(); state.progress.P01 = 1; startMission('P01', 1)");
+assert.match(app.innerHTML, /data-kind="memory"/);
+assert.equal((app.innerHTML.match(/class="memory-card/g) || []).length, 8);
+validateHandlers();
+
+console.log(`Passed: ${api.CONTENT.length} units, 33 missions, 11 activity types, combined learning track, persistence, retries, and inline handlers.`);
