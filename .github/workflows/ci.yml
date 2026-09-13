@@ -27,5 +27,8 @@ jobs:
       - name: Check JavaScript syntax
         run: node --check app.js
 
+      - name: Validate the audio inventory
+        run: node scripts/build-audio-manifest.cjs --check
+
       - name: Run curriculum smoke tests
         run: node tests/smoke.cjs

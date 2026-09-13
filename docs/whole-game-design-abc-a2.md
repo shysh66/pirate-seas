@@ -553,6 +553,8 @@ Persist after each meaningful checkpoint. Completion, memory updates, and reward
 | M5 Complete A1 | A09–A16, A1 profile, parent observations | Comparisons, past, short narrative, practical reading/writing, and communication assessed separately |
 | M6 A2 production | Full inventories/scripts for B01–B12 | Proceed after A1 retention and production data support the design |
 
+**Implementation status, 13 September 2026:** the M1 reliability code now includes item-level evidence, due-time review scheduling, separately labeled journey progress and delayed memory, stable attempt IDs, idempotent reward transactions, and a vendor-neutral 123-clip recorded-audio inventory with device-voice fallback. The Name Island audit now introduces people before retrieval, replaces the unsupported *girl* spelling task with decodable *man*, and models *wave/walk* before testing commands. M1 remains open until reviewed normal/supportive MP3 files populate the inventory and a repeat low-spec tablet playtest confirms audio pacing, review comprehension, save recovery, and no duplicate rewards.
+
 For each major mechanic, observe at least five children in each relevant learner mode as an initial usability check, including low-spec tablet sessions. This is a small design pilot, not an efficacy study. Include repeat visits to test delayed retrieval; a single sitting cannot validate spaced learning.
 
 Track whether children understand the mechanic, require adult rescue, can find replay/help, encounter ambiguous pictures, and show fatigue. Review learning targets at a later session and around day seven. Report what was actually observed; do not invent retention thresholds or efficacy claims from a small pilot.

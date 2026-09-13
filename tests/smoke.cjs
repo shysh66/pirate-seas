@@ -30,6 +30,7 @@ vm.runInContext(readFileSync('app.js', 'utf8'), context);
 
 const run = code => vm.runInContext(code, context);
 const api = windowObject.PirateSeas;
+const audioManifest = JSON.parse(readFileSync('audio/manifest.json', 'utf8'));
 
 function decodeHandler(value) {
   return value.replaceAll('&quot;', '"').replaceAll('&lt;', '<').replaceAll('&gt;', '>').replaceAll('&amp;', '&');
@@ -40,6 +41,10 @@ function validateHandlers() {
 }
 
 assert.deepEqual(Array.from(api.validateContent()), [], 'Content contract must be valid');
+assert.equal(api.freshState().version, 5, 'New saves should use the evidence-aware schema');
+assert.deepEqual(Object.keys(api.freshState().memory), []);
+assert(Object.keys(audioManifest.clips).length >= 100, 'Every spoken line should be inventoried for recording');
+assert(Object.values(audioManifest.clips).every(clip => clip.normal.endsWith('.mp3') && clip.supportive.endsWith('-slow.mp3')));
 run('speak("flag")');
 assert.equal(spoken.at(-1).voice, naturalVoice, 'Speech should prefer a natural English voice');
 assert.equal(spoken.at(-1).rate, .58, 'Single words should be spoken especially slowly');
@@ -48,7 +53,11 @@ run('speak("This is my flag. Goodbye!")');
 assert.equal(spoken.at(-1).rate, .62, 'Short phrases should use the young-learner pace');
 assert.equal(api.CONTENT.filter(unit => unit.world === 'foundations').length, 6);
 assert.equal(api.CONTENT.filter(unit => unit.world === 'foundations').reduce((sum, unit) => sum + unit.missions.length, 0), 26);
-assert.equal(api.CONTENT.find(unit => unit.id === 'P01').missions.length, 7);
+const nameIsland = api.CONTENT.find(unit => unit.id === 'P01');
+assert.equal(nameIsland.missions.length, 7);
+assert.equal(nameIsland.missions[0].kind, 'collect', 'Name Island should introduce people before testing retrieval');
+assert.deepEqual(Array.from(nameIsland.missions[2].target), ['m', 'a', 'n'], 'Name Island literacy should use an eligible word instead of untaught ir');
+assert.equal(nameIsland.missions[3].models.length, 2, 'New action verbs should be modeled before the command challenge');
 assert(new Set(api.CONTENT.flatMap(unit => unit.missions.map(mission => mission.kind))).size >= 10, 'The journey should contain at least ten distinct activity types');
 for (const mission of api.CONTENT.find(unit => unit.id === 'F00').missions) {
   assert([...mission.instructionHe].length <= 30, `${mission.id}: Starting Harbor instruction is too long for young children`);
@@ -93,6 +102,7 @@ function finishAuthoredMission(unit, mission, index) {
   validateHandlers();
   const active = api.modeMission(mission);
   if (active.kind === 'choice' || active.kind === 'checkpoint') {
+    for (const model of active.models || []) run(`previewModel(${JSON.stringify(model.id)})`);
     for (const round of active.rounds) run(`chooseAnswer(${JSON.stringify(round.answer)})`);
   } else if (active.kind === 'sail') {
     for (const round of active.rounds) run(`chooseSail(${JSON.stringify(round.answer)})`);
@@ -132,6 +142,11 @@ const finalState = api.getState();
 for (const unit of api.CONTENT) assert.equal(finalState.progress[unit.id], unit.missions.length, `${unit.id} should complete`);
 assert.equal(finalState.pearls, api.CONTENT.length, 'One pearl should be awarded per completed unit');
 assert(finalState.coins > 0, 'Coins should be awarded');
+assert(finalState.evidence.length > 50, 'Activities should emit item-level learning evidence');
+assert(Object.keys(finalState.memory).length > 30, 'Activities should create per-skill memory records');
+assert.equal(Object.keys(finalState.transactions).filter(key => key.startsWith('mission:')).length, 33, 'Each mission reward should have one transaction');
+assert.equal(Object.keys(finalState.transactions).filter(key => key.startsWith('unit:')).length, api.CONTENT.length, 'Each unit reward should have one transaction');
+assert(Object.values(finalState.memory).every(record => record.level < 3), 'Same-session success must not be presented as remembered knowledge');
 assert(saved.has('pirate-seas-v2'), 'Progress should persist');
 
 const reloadApp = { innerHTML: '' };
@@ -162,11 +177,29 @@ vm.runInContext(readFileSync('app.js', 'utf8'), vm.createContext({
   setTimeout: fn => { fn(); return 1; }
 }));
 const repairedState = migrationWindow.PirateSeas.getState();
-assert.equal(repairedState.version, 4);
+assert.equal(repairedState.version, 5);
 assert.equal(repairedState.mode, 'combined');
 assert.equal(repairedState.progress.F00 || 0, 0, 'Auto-completed foundations should reset to mission 1');
 assert.equal(repairedState.progress.P01, 2, 'Existing Name Island progress should be preserved');
 assert.equal(repairedState.coins, 17, 'Existing rewards should be preserved');
+
+// Reward commits are idempotent even if completion is delivered twice.
+run("state = freshState(); startMission('F00', 0); chooseAnswer('hello')");
+const onceRewarded = api.getState().coins;
+run('completeMission()');
+assert.equal(api.getState().coins, onceRewarded, 'A repeated completion callback must not duplicate coins');
+assert.equal(Object.keys(api.getState().transactions).filter(key => key === 'mission:F00-M01').length, 1);
+
+// A delayed independent retrieval advances memory and leaves an auditable review event.
+run("state = freshState(); startMission('F00', 0); chooseAnswer('hello')");
+assert.equal(api.getState().memory['receptive:hello'].level, 1, 'First success should schedule learning, not mastery');
+run("state.memory['receptive:hello'].dueAt = 0; showWorld()");
+assert.match(app.innerHTML, /1 פריטים מחכים לתרגול קצר/);
+run('startReview()');
+assert.match(app.innerHTML, /חזרה מרווחת/);
+run("chooseReview('hello')");
+assert.equal(api.getState().memory['receptive:hello'].level, 2, 'A later independent retrieval should advance one interval');
+assert(api.getState().evidence.some(event => event.activity === 'spaced-review' && event.itemId === 'hello'));
 
 // Replaying mission 1 of a completed location stays inside that location.
 run("state = freshState(); state.progress.F00 = 4; startMission('F00', 0); chooseAnswer('hello')");
@@ -210,4 +243,15 @@ assert.match(app.innerHTML, /data-kind="memory"/);
 assert.equal((app.innerHTML.match(/class="memory-card/g) || []).length, 8);
 validateHandlers();
 
-console.log(`Passed: ${api.CONTENT.length} units, 33 missions, 11 activity types, combined learning track, persistence, retries, and inline handlers.`);
+run("state = freshState(); state.progress.P01 = 3; startMission('P01', 3)");
+assert.match(app.innerHTML, /קודם מכירים את הפעולות/);
+assert.equal((app.innerHTML.match(/class="card"[^>]*disabled/g) || []).length, 3, 'Command choices should wait until both actions are heard');
+const gatedRound = run('session.round');
+run("chooseAnswer('wave')");
+assert.equal(run('session.round'), gatedRound, 'Direct calls must not bypass the action-model gate');
+assert.match(feedback.textContent, /קודם שומעים/);
+run("previewModel('wave'); previewModel('walk')");
+assert.equal((app.innerHTML.match(/class="card"[^>]*disabled/g) || []).length, 0, 'Modeled actions should unlock the command choices');
+assert.equal(api.getState().evidence.filter(event => event.activity === 'model').length, 2);
+
+console.log(`Passed: ${api.CONTENT.length} units, 33 missions, 11 activity types, audio inventory, evidence, spaced review, transactional rewards, Name Island modeling, persistence, retries, and inline handlers.`);
