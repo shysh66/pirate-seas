@@ -642,10 +642,11 @@ function chooseReview(choice) {
   const prompt = reviewSession?.queue[reviewSession.index];
   if (!prompt) return;
   if (choice !== prompt.itemId) {
+    const selected = prompt.options.find(option => option.id === choice);
     reviewSession.roundMistakes += 1;
     recordEvidence(prompt.itemId, { missionId: prompt.sourceMissionId, skill: prompt.skill, activity: "spaced-review", correct: false, assisted: false, responseType: "recognition", firstAttempt: reviewSession.roundMistakes === 1 });
     feedback("כמעט. שמעו שוב ונסו.");
-    speak(prompt.say, { supportive: true });
+    speak(selected?.audio || selected?.label || choice, { supportive: true });
     return;
   }
   const assisted = reviewSession.roundMistakes > 0;
@@ -674,9 +675,10 @@ function chooseAnswer(choice) {
   }
   const round = mission.rounds[session.round];
   if (choice !== round.answer) {
+    const selected = round.options.find(option => option.id === choice);
     recordMistake(round.answer, { skill: "receptive", activity: mission.kind, responseType: "recognition" });
     feedback("כמעט. הקשיבו שוב ונסו עוד פעם.");
-    speak(round.say);
+    speak(selected?.audio || selected?.label || choice, { supportive: true });
     return;
   }
   recordSuccess(round.answer, { skill: "receptive", activity: mission.kind, responseType: "recognition" });

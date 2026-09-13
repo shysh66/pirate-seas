@@ -51,6 +51,10 @@ assert.equal(spoken.at(-1).rate, .58, 'Single words should be spoken especially 
 assert.equal(spoken.at(-1).pitch, .96, 'Speech should use a calmer pitch');
 run('speak("This is my flag. Goodbye!")');
 assert.equal(spoken.at(-1).rate, .62, 'Short phrases should use the young-learner pace');
+run("state = freshState(); startMission('F00', 0); chooseAnswer('boat')");
+assert.equal(spoken.at(-1).text, 'Boat', 'A tapped picture should speak its own word, not repeat Hello');
+assert.equal(run('session.round'), 0, 'Speaking a wrong picture must not advance the mission');
+run('state = freshState(); showWorld()');
 assert.equal(api.CONTENT.filter(unit => unit.world === 'foundations').length, 6);
 assert.equal(api.CONTENT.filter(unit => unit.world === 'foundations').reduce((sum, unit) => sum + unit.missions.length, 0), 26);
 const nameIsland = api.CONTENT.find(unit => unit.id === 'P01');
