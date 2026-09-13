@@ -6,6 +6,7 @@ const app = { innerHTML: '' };
 const feedback = { textContent: '', className: '' };
 const saved = new Map();
 const spoken = [];
+const naturalVoice = { name: 'Samantha', lang: 'en-US', localService: true, default: false };
 const windowObject = {};
 const context = vm.createContext({
   console,
@@ -14,7 +15,15 @@ const context = vm.createContext({
   window: windowObject,
   setTimeout: fn => { fn(); return 1; },
   SpeechSynthesisUtterance: function (text) { this.text = text; },
-  speechSynthesis: { cancel() {}, speak: utterance => spoken.push(utterance.text) }
+  speechSynthesis: {
+    cancel() {},
+    getVoices: () => [
+      { name: 'Robot Compact', lang: 'en-US', localService: true, default: true },
+      naturalVoice
+    ],
+    addEventListener() {},
+    speak: utterance => spoken.push(utterance)
+  }
 });
 windowObject.speechSynthesis = context.speechSynthesis;
 vm.runInContext(readFileSync('app.js', 'utf8'), context);
@@ -31,6 +40,12 @@ function validateHandlers() {
 }
 
 assert.deepEqual(Array.from(api.validateContent()), [], 'Content contract must be valid');
+run('speak("flag")');
+assert.equal(spoken.at(-1).voice, naturalVoice, 'Speech should prefer a natural English voice');
+assert.equal(spoken.at(-1).rate, .58, 'Single words should be spoken especially slowly');
+assert.equal(spoken.at(-1).pitch, .96, 'Speech should use a calmer pitch');
+run('speak("This is my flag. Goodbye!")');
+assert.equal(spoken.at(-1).rate, .62, 'Short phrases should use the young-learner pace');
 assert.equal(api.CONTENT.filter(unit => unit.world === 'foundations').length, 6);
 assert.equal(api.CONTENT.filter(unit => unit.world === 'foundations').reduce((sum, unit) => sum + unit.missions.length, 0), 26);
 assert.equal(api.CONTENT.find(unit => unit.id === 'P01').missions.length, 7);

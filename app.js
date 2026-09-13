@@ -192,14 +192,58 @@ function saveState() { localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
 function esc(value) { return String(value).replace(/[&<>\"]/g, char => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;" })[char]); }
 function jsArg(value) { return esc(JSON.stringify(value)); }
 function shuffle(list) { return [...list].sort(() => Math.random() - .5); }
+
+const NATURAL_VOICE_NAMES = [
+  /microsoft (aria|jenny|sonia).*natural/i,
+  /samantha/i,
+  /ava/i,
+  /serena/i,
+  /karen/i,
+  /google (us|uk) english/i,
+  /natural|neural|enhanced|premium/i
+];
+let englishVoice = null;
+
+function chooseEnglishVoice() {
+  if (!("speechSynthesis" in window) || typeof speechSynthesis.getVoices !== "function") return null;
+  const voices = speechSynthesis.getVoices().filter(voice => /^en([-_]|$)/i.test(voice.lang || ""));
+  englishVoice = voices.sort((a, b) => voiceScore(b) - voiceScore(a))[0] || null;
+  return englishVoice;
+}
+
+function voiceScore(voice) {
+  const preferred = NATURAL_VOICE_NAMES.findIndex(pattern => pattern.test(voice.name || ""));
+  return (preferred < 0 ? 0 : 100 - preferred * 8)
+    + (/^en-US$/i.test(voice.lang || "") ? 18 : 0)
+    + (voice.localService ? 4 : 0)
+    + (voice.default ? 2 : 0)
+    - (/compact|e?speak|robot/i.test(voice.name || "") ? 40 : 0);
+}
+
+function speechRate(text) {
+  const words = String(text).trim().split(/\s+/).filter(Boolean).length;
+  return words <= 2 ? .58 : words <= 6 ? .62 : .65;
+}
+
 function speak(text) {
   if ("speechSynthesis" in window && typeof SpeechSynthesisUtterance !== "undefined") {
     speechSynthesis.cancel();
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = "en-US";
-    utterance.rate = .78;
+    const spokenText = String(text).replace(/\s+/g, " ").trim();
+    if (!spokenText) return;
+    const utterance = new SpeechSynthesisUtterance(spokenText);
+    const voice = englishVoice || chooseEnglishVoice();
+    utterance.lang = voice?.lang || "en-US";
+    if (voice) utterance.voice = voice;
+    utterance.rate = speechRate(spokenText);
+    utterance.pitch = .96;
+    utterance.volume = 1;
     speechSynthesis.speak(utterance);
   }
+}
+
+if ("speechSynthesis" in window) {
+  chooseEnglishVoice();
+  if (typeof speechSynthesis.addEventListener === "function") speechSynthesis.addEventListener("voiceschanged", chooseEnglishVoice);
 }
 
 function getProgress(unitId) { return Math.min(state.progress[unitId] || 0, UNIT_BY_ID[unitId].missions.length); }
