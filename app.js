@@ -9,16 +9,21 @@ const CONTENT = [
     id: "F00", world: "foundations", icon: "⚓", nameHe: "נמל ההתחלה", nameEn: "Starting Harbor",
     summaryHe: "פוגשים את התוכי ולומדים להקשיב, לבחור, לנוע ולעצור.", reward: 20,
     missions: [
-      { id: "F00-M01", icon: "👋", nameHe: "שלום, תוכי!", kind: "choice", instructionHe: "התוכי אומר Hello. געו ביד שמנופפת.", rounds: [
+      { id: "F00-M01", icon: "👋", nameHe: "שלום, תוכי!", kind: "choice", instructionHe: "שמעו Hello. געו ביד. 👋", rounds: [
         { say: "Hello!", answer: "hello", options: [O("hello", "👋", "Hello!"), O("boat", "⛵", "Boat"), O("parrot", "🦜", "Parrot")] }
       ] },
-      { id: "F00-M02", icon: "🔊", nameHe: "בודקים את הצליל", kind: "collect", instructionHe: "געו בכל תמונה. התוכי ישמיע את המילה.", items: [O("listen", "👂", "Listen"), O("look", "👀", "Look"), O("yes", "👍", "Yes"), O("no", "👎", "No")] },
-      { id: "F00-M03", icon: "⛵", nameHe: "הסירה זזה", kind: "sail", instructionHe: "הקשיבו לפקודה והפעילו את הסירה: הפליגו או הטילו עוגן.", rounds: [
+      { id: "F00-M02", icon: "🔊", nameHe: "בודקים את הצליל", kind: "collect", instructionHe: "געו בכל תמונה ושמעו.", items: [O("listen", "👂", "Listen"), O("look", "👀", "Look"), O("yes", "👍", "Yes"), O("no", "👎", "No")] },
+      { id: "F00-M03", icon: "⛵", nameHe: "הסירה זזה", kind: "sail", instructionHe: "שמעו. השיטו או עצרו.", rounds: [
         { say: "Go!", answer: "go", options: [O("go", "▶️", "Go"), O("stop", "⏹️", "Stop")] },
         { say: "Stop!", answer: "stop", options: [O("go", "▶️", "Go"), O("stop", "⏹️", "Stop")] },
         { say: "Go!", answer: "go", options: [O("go", "▶️", "Go"), O("stop", "⏹️", "Stop")] }
       ] },
-      { id: "F00-M04", icon: "🚩", nameHe: "הדגל שלי", kind: "flag", instructionHe: "בחרו דגל לסירה, ואז אמרו Goodbye לנמל.", flags: ["🐚", "⭐", "🦜", "🌈"] }
+      { id: "F00-M04", icon: "🚩", nameHe: "הדגל שלי", kind: "flag", instructionHe: "בחרו דגל. געו ושמעו.", flags: [
+        { id: "star", symbol: "⭐", color: "#2773c8", accent: "#ffd85c", audio: "star flag" },
+        { id: "parrot", symbol: "🦜", color: "#e45b50", accent: "#ffd85c", audio: "parrot flag" },
+        { id: "shell", symbol: "🐚", color: "#24a983", accent: "#fff0bd", audio: "shell flag" },
+        { id: "rainbow", symbol: "🌈", color: "#7652af", accent: "#f5cf55", audio: "rainbow flag" }
+      ] }
     ]
   },
   {
@@ -279,6 +284,7 @@ function instructionAudio(mission) {
   if (mission.kind === "collect") return "Tap and listen";
   if (mission.kind === "sort") return "Sort the words";
   if (mission.kind === "memory") return "Find the matching pairs";
+  if (mission.kind === "flag") return "Flag. Choose a flag";
   if (mission.kind === "sequence") return mission.say || mission.result;
   if (mission.kind === "dialogue") return mission.turns?.[session?.round || 0]?.npc || "Hello";
   return "Listen";
@@ -342,7 +348,10 @@ const RENDERERS = {
     activityFrame(mission, `<div class="memory-board">${cards}</div><div class="status-row"><span class="status-chip">זוגות <bdi>${session.matched.length} / ${mission.pairs.length}</bdi></span></div>`, "memory-activity");
   },
   flag(mission) {
-    activityFrame(mission, `<div class="prompt"><span class="emoji">${state.flag || "⛵"}</span><span>${state.flag ? "הדגל מוכן!" : "בחרו סמל"}</span></div><div class="flag-grid">${mission.flags.map(flag => `<button class="flag ${state.flag === flag ? "selected" : ""}" onclick="chooseFlag(${jsArg(flag)})">${flag}</button>`).join("")}</div><p class="center"><button class="primary" ${state.flag ? "" : "disabled"} onclick="finishFlag()">Goodbye! 👋</button></p>`);
+    const selected = selectedFlag(mission);
+    const previewStyle = selected ? `--flag-color:${selected.color};--flag-accent:${selected.accent}` : "";
+    const choices = mission.flags.map(flag => `<button class="flag-choice ${selected?.id === flag.id ? "selected" : ""}" aria-label="${esc(flag.audio)}" onclick="chooseFlag(${jsArg(flag.id)})"><span class="flag-cloth" style="--flag-color:${flag.color};--flag-accent:${flag.accent}"><b>${flag.symbol}</b></span><small class="english">flag</small></button>`).join("");
+    activityFrame(mission, `<div class="flag-stage"><div class="flag-preview ${selected ? "ready" : "empty"}"><span class="flag-cloth" style="${previewStyle}"><b>${selected?.symbol || "?"}</b></span></div><div class="flag-words"><b>${selected ? "זה הדגל שלי!" : "זה דגל"}</b><span class="english">${selected ? "My flag!" : "flag"}</span><button class="secondary" onclick="speak(${jsArg(selected ? `This is my ${selected.audio}` : "flag")})">🔊</button></div></div><div class="flag-grid">${choices}</div><p class="center"><button class="primary flag-confirm" ${selected ? "" : "disabled"} onclick="finishFlag()"><span>🏴 זה הדגל שלי!</span><b class="english">My flag!</b></button></p>`, "flag-activity");
   },
   case(mission) {
     const pair = mission.pairs[session.round];
@@ -503,8 +512,29 @@ function checkSequence() {
   speak(mission.say || mission.result);
 }
 
-function chooseFlag(flag) { state.flag = flag; saveState(); renderMission(); speak("My flag"); }
-function finishFlag() { if (state.flag) { speak("Goodbye!"); completeMission(); } }
+function selectedFlag(mission) {
+  return mission.flags.find(flag => flag.id === state.flag || flag.symbol === state.flag) || null;
+}
+
+function chooseFlag(flagId) {
+  const mission = modeMission(UNIT_BY_ID[session.unitId].missions[session.missionIndex]);
+  const flag = mission.flags.find(candidate => candidate.id === flagId);
+  if (!flag) return;
+  state.flag = flag.id;
+  saveState();
+  renderMission();
+  feedback("דגל! זה הדגל שלי.", true);
+  speak(`Flag. ${flag.audio}. My flag.`);
+}
+
+function finishFlag() {
+  const mission = modeMission(UNIT_BY_ID[session.unitId].missions[session.missionIndex]);
+  const flag = selectedFlag(mission);
+  if (!flag) return;
+  feedback("זה הדגל שלי!", true);
+  speak("This is my flag. Goodbye!");
+  setTimeout(completeMission, 900);
+}
 
 function chooseCase(letter) {
   const mission = modeMission(UNIT_BY_ID[session.unitId].missions[session.missionIndex]);
