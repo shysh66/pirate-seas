@@ -49,8 +49,10 @@ assert.match(app.innerHTML, /אי השמות/);
 assert.match(app.innerHTML, /class="sea-map"/, 'Main screen should render a visual sea map');
 assert.match(app.innerHTML, /class="sea-route-lines"/, 'Visual map should connect locations with a route');
 assert.equal((app.innerHTML.match(/class="map-location/g) || []).length, 7, 'Visual map should show every location');
+assert.equal((app.innerHTML.match(/class="location-tooltip"/g) || []).length, 7, 'Every location should expose hover information');
+assert.match(app.innerHTML, /מה לומדים כאן\?/);
 assert.match(app.innerHTML, /map-location location-0[^>]*current/, 'Current location should be highlighted');
-assert.match(app.innerHTML, /map-location location-1[^>]*locked[^>]*disabled/, 'Future locations should remain locked');
+assert.match(app.innerHTML, /map-location location-1[^>]*locked[^>]*aria-disabled="true"/, 'Future locations should remain locked and focusable');
 
 for (const mode of ['reader', 'pre']) {
   run(`state.mode = '${mode}'`);
