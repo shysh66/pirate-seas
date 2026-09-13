@@ -14,6 +14,28 @@
       "pronunciationReview": "pending",
       "rights": "pending"
     },
+    "a green shell": {
+      "id": "a-green-shell-bef1924",
+      "text": "a green shell",
+      "locale": "en-US",
+      "category": "phrase",
+      "normal": "audio/en-US/a-green-shell-bef1924.mp3",
+      "supportive": "audio/en-US/a-green-shell-bef1924-slow.mp3",
+      "status": "needed",
+      "pronunciationReview": "pending",
+      "rights": "pending"
+    },
+    "a green star": {
+      "id": "a-green-star-57e175e",
+      "text": "a green star",
+      "locale": "en-US",
+      "category": "phrase",
+      "normal": "audio/en-US/a-green-star-57e175e.mp3",
+      "supportive": "audio/en-US/a-green-star-57e175e-slow.mp3",
+      "status": "needed",
+      "pronunciationReview": "pending",
+      "rights": "pending"
+    },
     "a red cat": {
       "id": "a-red-cat-45fe998",
       "text": "a red cat",
@@ -32,6 +54,28 @@
       "category": "phrase",
       "normal": "audio/en-US/a-red-hat-3e56ede.mp3",
       "supportive": "audio/en-US/a-red-hat-3e56ede-slow.mp3",
+      "status": "needed",
+      "pronunciationReview": "pending",
+      "rights": "pending"
+    },
+    "a red shell": {
+      "id": "a-red-shell-c59ba5b",
+      "text": "a red shell",
+      "locale": "en-US",
+      "category": "phrase",
+      "normal": "audio/en-US/a-red-shell-c59ba5b.mp3",
+      "supportive": "audio/en-US/a-red-shell-c59ba5b-slow.mp3",
+      "status": "needed",
+      "pronunciationReview": "pending",
+      "rights": "pending"
+    },
+    "a yellow star": {
+      "id": "a-yellow-star-1474227",
+      "text": "a yellow star",
+      "locale": "en-US",
+      "category": "phrase",
+      "normal": "audio/en-US/a-yellow-star-1474227.mp3",
+      "supportive": "audio/en-US/a-yellow-star-1474227-slow.mp3",
       "status": "needed",
       "pronunciationReview": "pending",
       "rights": "pending"
@@ -91,6 +135,28 @@
       "pronunciationReview": "pending",
       "rights": "pending"
     },
+    "black": {
+      "id": "black-466bc8c",
+      "text": "black",
+      "locale": "en-US",
+      "category": "word-or-chunk",
+      "normal": "audio/en-US/black-466bc8c.mp3",
+      "supportive": "audio/en-US/black-466bc8c-slow.mp3",
+      "status": "needed",
+      "pronunciationReview": "pending",
+      "rights": "pending"
+    },
+    "blue": {
+      "id": "blue-4c9a82c",
+      "text": "blue",
+      "locale": "en-US",
+      "category": "word-or-chunk",
+      "normal": "audio/en-US/blue-4c9a82c.mp3",
+      "supportive": "audio/en-US/blue-4c9a82c-slow.mp3",
+      "status": "needed",
+      "pronunciationReview": "pending",
+      "rights": "pending"
+    },
     "boat": {
       "id": "boat-ef58de4",
       "text": "Boat",
@@ -120,6 +186,28 @@
       "category": "word-or-chunk",
       "normal": "audio/en-US/boy-ceac9b0.mp3",
       "supportive": "audio/en-US/boy-ceac9b0-slow.mp3",
+      "status": "needed",
+      "pronunciationReview": "pending",
+      "rights": "pending"
+    },
+    "brown circle": {
+      "id": "brown-circle-a44d0a3",
+      "text": "brown circle",
+      "locale": "en-US",
+      "category": "word-or-chunk",
+      "normal": "audio/en-US/brown-circle-a44d0a3.mp3",
+      "supportive": "audio/en-US/brown-circle-a44d0a3-slow.mp3",
+      "status": "needed",
+      "pronunciationReview": "pending",
+      "rights": "pending"
+    },
+    "brown square": {
+      "id": "brown-square-d60fa24",
+      "text": "brown square",
+      "locale": "en-US",
+      "category": "word-or-chunk",
+      "normal": "audio/en-US/brown-square-d60fa24.mp3",
+      "supportive": "audio/en-US/brown-square-d60fa24-slow.mp3",
       "status": "needed",
       "pronunciationReview": "pending",
       "rights": "pending"
@@ -164,6 +252,17 @@
       "category": "dialogue",
       "normal": "audio/en-US/cat-change-c-to-h-hat-6bfa779.mp3",
       "supportive": "audio/en-US/cat-change-c-to-h-hat-6bfa779-slow.mp3",
+      "status": "needed",
+      "pronunciationReview": "pending",
+      "rights": "pending"
+    },
+    "circle": {
+      "id": "circle-00b7b81",
+      "text": "circle",
+      "locale": "en-US",
+      "category": "word-or-chunk",
+      "normal": "audio/en-US/circle-00b7b81.mp3",
+      "supportive": "audio/en-US/circle-00b7b81-slow.mp3",
       "status": "needed",
       "pronunciationReview": "pending",
       "rights": "pending"
@@ -245,6 +344,72 @@
       "pronunciationReview": "pending",
       "rights": "pending"
     },
+    "eight": {
+      "id": "eight-d479fa0",
+      "text": "eight",
+      "locale": "en-US",
+      "category": "word-or-chunk",
+      "normal": "audio/en-US/eight-d479fa0.mp3",
+      "supportive": "audio/en-US/eight-d479fa0-slow.mp3",
+      "status": "needed",
+      "pronunciationReview": "pending",
+      "rights": "pending"
+    },
+    "eight stars": {
+      "id": "eight-stars-d85f69e",
+      "text": "eight stars",
+      "locale": "en-US",
+      "category": "word-or-chunk",
+      "normal": "audio/en-US/eight-stars-d85f69e.mp3",
+      "supportive": "audio/en-US/eight-stars-d85f69e-slow.mp3",
+      "status": "needed",
+      "pronunciationReview": "pending",
+      "rights": "pending"
+    },
+    "eighteen": {
+      "id": "eighteen-70c6adb",
+      "text": "eighteen",
+      "locale": "en-US",
+      "category": "word-or-chunk",
+      "normal": "audio/en-US/eighteen-70c6adb.mp3",
+      "supportive": "audio/en-US/eighteen-70c6adb-slow.mp3",
+      "status": "needed",
+      "pronunciationReview": "pending",
+      "rights": "pending"
+    },
+    "eleven": {
+      "id": "eleven-cc5a0c5",
+      "text": "eleven",
+      "locale": "en-US",
+      "category": "word-or-chunk",
+      "normal": "audio/en-US/eleven-cc5a0c5.mp3",
+      "supportive": "audio/en-US/eleven-cc5a0c5-slow.mp3",
+      "status": "needed",
+      "pronunciationReview": "pending",
+      "rights": "pending"
+    },
+    "eleven boxes": {
+      "id": "eleven-boxes-ab07078",
+      "text": "eleven boxes",
+      "locale": "en-US",
+      "category": "word-or-chunk",
+      "normal": "audio/en-US/eleven-boxes-ab07078.mp3",
+      "supportive": "audio/en-US/eleven-boxes-ab07078-slow.mp3",
+      "status": "needed",
+      "pronunciationReview": "pending",
+      "rights": "pending"
+    },
+    "eleven shells": {
+      "id": "eleven-shells-e2751c2",
+      "text": "eleven shells",
+      "locale": "en-US",
+      "category": "word-or-chunk",
+      "normal": "audio/en-US/eleven-shells-e2751c2.mp3",
+      "supportive": "audio/en-US/eleven-shells-e2751c2-slow.mp3",
+      "status": "needed",
+      "pronunciationReview": "pending",
+      "rights": "pending"
+    },
     "f fish": {
       "id": "f-fish-84b23b7",
       "text": "f, fish",
@@ -256,6 +421,17 @@
       "pronunciationReview": "pending",
       "rights": "pending"
     },
+    "fifteen": {
+      "id": "fifteen-5cf896e",
+      "text": "fifteen",
+      "locale": "en-US",
+      "category": "word-or-chunk",
+      "normal": "audio/en-US/fifteen-5cf896e.mp3",
+      "supportive": "audio/en-US/fifteen-5cf896e-slow.mp3",
+      "status": "needed",
+      "pronunciationReview": "pending",
+      "rights": "pending"
+    },
     "find the matching pairs": {
       "id": "find-the-matching-pairs-dcd8656",
       "text": "Find the matching pairs",
@@ -263,6 +439,61 @@
       "category": "phrase",
       "normal": "audio/en-US/find-the-matching-pairs-dcd8656.mp3",
       "supportive": "audio/en-US/find-the-matching-pairs-dcd8656-slow.mp3",
+      "status": "needed",
+      "pronunciationReview": "pending",
+      "rights": "pending"
+    },
+    "five": {
+      "id": "five-4db2c1d",
+      "text": "five",
+      "locale": "en-US",
+      "category": "word-or-chunk",
+      "normal": "audio/en-US/five-4db2c1d.mp3",
+      "supportive": "audio/en-US/five-4db2c1d-slow.mp3",
+      "status": "needed",
+      "pronunciationReview": "pending",
+      "rights": "pending"
+    },
+    "five flags": {
+      "id": "five-flags-702ba17",
+      "text": "five flags",
+      "locale": "en-US",
+      "category": "word-or-chunk",
+      "normal": "audio/en-US/five-flags-702ba17.mp3",
+      "supportive": "audio/en-US/five-flags-702ba17-slow.mp3",
+      "status": "needed",
+      "pronunciationReview": "pending",
+      "rights": "pending"
+    },
+    "five orange stars": {
+      "id": "five-orange-stars-771cce6",
+      "text": "five orange stars",
+      "locale": "en-US",
+      "category": "phrase",
+      "normal": "audio/en-US/five-orange-stars-771cce6.mp3",
+      "supportive": "audio/en-US/five-orange-stars-771cce6-slow.mp3",
+      "status": "needed",
+      "pronunciationReview": "pending",
+      "rights": "pending"
+    },
+    "five shells": {
+      "id": "five-shells-859254c",
+      "text": "five shells",
+      "locale": "en-US",
+      "category": "word-or-chunk",
+      "normal": "audio/en-US/five-shells-859254c.mp3",
+      "supportive": "audio/en-US/five-shells-859254c-slow.mp3",
+      "status": "needed",
+      "pronunciationReview": "pending",
+      "rights": "pending"
+    },
+    "five yellow stars": {
+      "id": "five-yellow-stars-1570432",
+      "text": "five yellow stars",
+      "locale": "en-US",
+      "category": "phrase",
+      "normal": "audio/en-US/five-yellow-stars-1570432.mp3",
+      "supportive": "audio/en-US/five-yellow-stars-1570432-slow.mp3",
       "status": "needed",
       "pronunciationReview": "pending",
       "rights": "pending"
@@ -318,6 +549,50 @@
       "category": "dialogue",
       "normal": "audio/en-US/flag-star-flag-my-flag-006f814.mp3",
       "supportive": "audio/en-US/flag-star-flag-my-flag-006f814-slow.mp3",
+      "status": "needed",
+      "pronunciationReview": "pending",
+      "rights": "pending"
+    },
+    "four": {
+      "id": "four-9f8f7ee",
+      "text": "four",
+      "locale": "en-US",
+      "category": "word-or-chunk",
+      "normal": "audio/en-US/four-9f8f7ee.mp3",
+      "supportive": "audio/en-US/four-9f8f7ee-slow.mp3",
+      "status": "needed",
+      "pronunciationReview": "pending",
+      "rights": "pending"
+    },
+    "four shells": {
+      "id": "four-shells-a36b77a",
+      "text": "four shells",
+      "locale": "en-US",
+      "category": "word-or-chunk",
+      "normal": "audio/en-US/four-shells-a36b77a.mp3",
+      "supportive": "audio/en-US/four-shells-a36b77a-slow.mp3",
+      "status": "needed",
+      "pronunciationReview": "pending",
+      "rights": "pending"
+    },
+    "four yellow stars": {
+      "id": "four-yellow-stars-51de165",
+      "text": "four yellow stars",
+      "locale": "en-US",
+      "category": "phrase",
+      "normal": "audio/en-US/four-yellow-stars-51de165.mp3",
+      "supportive": "audio/en-US/four-yellow-stars-51de165-slow.mp3",
+      "status": "needed",
+      "pronunciationReview": "pending",
+      "rights": "pending"
+    },
+    "fourteen": {
+      "id": "fourteen-8a13a01",
+      "text": "fourteen",
+      "locale": "en-US",
+      "category": "word-or-chunk",
+      "normal": "audio/en-US/fourteen-8a13a01.mp3",
+      "supportive": "audio/en-US/fourteen-8a13a01-slow.mp3",
       "status": "needed",
       "pronunciationReview": "pending",
       "rights": "pending"
@@ -384,6 +659,28 @@
       "category": "word-or-chunk",
       "normal": "audio/en-US/goodbye-8f84614.mp3",
       "supportive": "audio/en-US/goodbye-8f84614-slow.mp3",
+      "status": "needed",
+      "pronunciationReview": "pending",
+      "rights": "pending"
+    },
+    "gray triangle": {
+      "id": "gray-triangle-bb0e921",
+      "text": "gray triangle",
+      "locale": "en-US",
+      "category": "word-or-chunk",
+      "normal": "audio/en-US/gray-triangle-bb0e921.mp3",
+      "supportive": "audio/en-US/gray-triangle-bb0e921-slow.mp3",
+      "status": "needed",
+      "pronunciationReview": "pending",
+      "rights": "pending"
+    },
+    "green": {
+      "id": "green-bc74f4f",
+      "text": "green",
+      "locale": "en-US",
+      "category": "word-or-chunk",
+      "normal": "audio/en-US/green-bc74f4f.mp3",
+      "supportive": "audio/en-US/green-bc74f4f-slow.mp3",
       "status": "needed",
       "pronunciationReview": "pending",
       "rights": "pending"
@@ -487,6 +784,50 @@
       "pronunciationReview": "pending",
       "rights": "pending"
     },
+    "how many circles": {
+      "id": "how-many-circles-a297be8",
+      "text": "How many circles?",
+      "locale": "en-US",
+      "category": "phrase",
+      "normal": "audio/en-US/how-many-circles-a297be8.mp3",
+      "supportive": "audio/en-US/how-many-circles-a297be8-slow.mp3",
+      "status": "needed",
+      "pronunciationReview": "pending",
+      "rights": "pending"
+    },
+    "how many flags": {
+      "id": "how-many-flags-90b36a0",
+      "text": "How many flags?",
+      "locale": "en-US",
+      "category": "phrase",
+      "normal": "audio/en-US/how-many-flags-90b36a0.mp3",
+      "supportive": "audio/en-US/how-many-flags-90b36a0-slow.mp3",
+      "status": "needed",
+      "pronunciationReview": "pending",
+      "rights": "pending"
+    },
+    "how many shells": {
+      "id": "how-many-shells-b227443",
+      "text": "How many shells?",
+      "locale": "en-US",
+      "category": "phrase",
+      "normal": "audio/en-US/how-many-shells-b227443.mp3",
+      "supportive": "audio/en-US/how-many-shells-b227443-slow.mp3",
+      "status": "needed",
+      "pronunciationReview": "pending",
+      "rights": "pending"
+    },
+    "how old are you": {
+      "id": "how-old-are-you-c0dcba1",
+      "text": "How old are you?",
+      "locale": "en-US",
+      "category": "phrase",
+      "normal": "audio/en-US/how-old-are-you-c0dcba1.mp3",
+      "supportive": "audio/en-US/how-old-are-you-c0dcba1-slow.mp3",
+      "status": "needed",
+      "pronunciationReview": "pending",
+      "rights": "pending"
+    },
     "i am happy": {
       "id": "i-am-happy-9bdfe71",
       "text": "I am happy",
@@ -494,6 +835,17 @@
       "category": "phrase",
       "normal": "audio/en-US/i-am-happy-9bdfe71.mp3",
       "supportive": "audio/en-US/i-am-happy-9bdfe71-slow.mp3",
+      "status": "needed",
+      "pronunciationReview": "pending",
+      "rights": "pending"
+    },
+    "i am seven": {
+      "id": "i-am-seven-c6004ba",
+      "text": "I am seven",
+      "locale": "en-US",
+      "category": "phrase",
+      "normal": "audio/en-US/i-am-seven-c6004ba.mp3",
+      "supportive": "audio/en-US/i-am-seven-c6004ba-slow.mp3",
       "status": "needed",
       "pronunciationReview": "pending",
       "rights": "pending"
@@ -509,6 +861,17 @@
       "pronunciationReview": "pending",
       "rights": "pending"
     },
+    "i'm eight": {
+      "id": "im-eight-0236008",
+      "text": "I'm eight.",
+      "locale": "en-US",
+      "category": "word-or-chunk",
+      "normal": "audio/en-US/im-eight-0236008.mp3",
+      "supportive": "audio/en-US/im-eight-0236008-slow.mp3",
+      "status": "needed",
+      "pronunciationReview": "pending",
+      "rights": "pending"
+    },
     "i'm happy": {
       "id": "im-happy-3855ae0",
       "text": "I'm happy!",
@@ -516,6 +879,28 @@
       "category": "word-or-chunk",
       "normal": "audio/en-US/im-happy-3855ae0.mp3",
       "supportive": "audio/en-US/im-happy-3855ae0-slow.mp3",
+      "status": "needed",
+      "pronunciationReview": "pending",
+      "rights": "pending"
+    },
+    "it's a blue star": {
+      "id": "its-a-blue-star-ff4e985",
+      "text": "It's a blue star.",
+      "locale": "en-US",
+      "category": "phrase",
+      "normal": "audio/en-US/its-a-blue-star-ff4e985.mp3",
+      "supportive": "audio/en-US/its-a-blue-star-ff4e985-slow.mp3",
+      "status": "needed",
+      "pronunciationReview": "pending",
+      "rights": "pending"
+    },
+    "it's red": {
+      "id": "its-red-f787270",
+      "text": "It's red.",
+      "locale": "en-US",
+      "category": "word-or-chunk",
+      "normal": "audio/en-US/its-red-f787270.mp3",
+      "supportive": "audio/en-US/its-red-f787270-slow.mp3",
       "status": "needed",
       "pronunciationReview": "pending",
       "rights": "pending"
@@ -619,6 +1004,17 @@
       "pronunciationReview": "pending",
       "rights": "pending"
     },
+    "look what is it": {
+      "id": "look-what-is-it-8395f1f",
+      "text": "Look! What is it?",
+      "locale": "en-US",
+      "category": "dialogue",
+      "normal": "audio/en-US/look-what-is-it-8395f1f.mp3",
+      "supportive": "audio/en-US/look-what-is-it-8395f1f-slow.mp3",
+      "status": "needed",
+      "pronunciationReview": "pending",
+      "rights": "pending"
+    },
     "m": {
       "id": "m-6b0d31c",
       "text": "m",
@@ -718,6 +1114,50 @@
       "pronunciationReview": "pending",
       "rights": "pending"
     },
+    "nine": {
+      "id": "nine-b4ddce1",
+      "text": "nine",
+      "locale": "en-US",
+      "category": "word-or-chunk",
+      "normal": "audio/en-US/nine-b4ddce1.mp3",
+      "supportive": "audio/en-US/nine-b4ddce1-slow.mp3",
+      "status": "needed",
+      "pronunciationReview": "pending",
+      "rights": "pending"
+    },
+    "nine shells": {
+      "id": "nine-shells-054c380",
+      "text": "nine shells",
+      "locale": "en-US",
+      "category": "word-or-chunk",
+      "normal": "audio/en-US/nine-shells-054c380.mp3",
+      "supportive": "audio/en-US/nine-shells-054c380-slow.mp3",
+      "status": "needed",
+      "pronunciationReview": "pending",
+      "rights": "pending"
+    },
+    "nine stars": {
+      "id": "nine-stars-aa1a983",
+      "text": "nine stars",
+      "locale": "en-US",
+      "category": "word-or-chunk",
+      "normal": "audio/en-US/nine-stars-aa1a983.mp3",
+      "supportive": "audio/en-US/nine-stars-aa1a983-slow.mp3",
+      "status": "needed",
+      "pronunciationReview": "pending",
+      "rights": "pending"
+    },
+    "nineteen": {
+      "id": "nineteen-885c39a",
+      "text": "nineteen",
+      "locale": "en-US",
+      "category": "word-or-chunk",
+      "normal": "audio/en-US/nineteen-885c39a.mp3",
+      "supportive": "audio/en-US/nineteen-885c39a-slow.mp3",
+      "status": "needed",
+      "pronunciationReview": "pending",
+      "rights": "pending"
+    },
     "no": {
       "id": "no-816c52f",
       "text": "No",
@@ -747,6 +1187,39 @@
       "category": "word-or-chunk",
       "normal": "audio/en-US/o-octopus-168ba07.mp3",
       "supportive": "audio/en-US/o-octopus-168ba07-slow.mp3",
+      "status": "needed",
+      "pronunciationReview": "pending",
+      "rights": "pending"
+    },
+    "one": {
+      "id": "one-fe05bcd",
+      "text": "one",
+      "locale": "en-US",
+      "category": "word-or-chunk",
+      "normal": "audio/en-US/one-fe05bcd.mp3",
+      "supportive": "audio/en-US/one-fe05bcd-slow.mp3",
+      "status": "needed",
+      "pronunciationReview": "pending",
+      "rights": "pending"
+    },
+    "one red shell": {
+      "id": "one-red-shell-c51f073",
+      "text": "one red shell",
+      "locale": "en-US",
+      "category": "phrase",
+      "normal": "audio/en-US/one-red-shell-c51f073.mp3",
+      "supportive": "audio/en-US/one-red-shell-c51f073-slow.mp3",
+      "status": "needed",
+      "pronunciationReview": "pending",
+      "rights": "pending"
+    },
+    "orange": {
+      "id": "orange-ef0ebbb",
+      "text": "orange",
+      "locale": "en-US",
+      "category": "word-or-chunk",
+      "normal": "audio/en-US/orange-ef0ebbb.mp3",
+      "supportive": "audio/en-US/orange-ef0ebbb-slow.mp3",
       "status": "needed",
       "pronunciationReview": "pending",
       "rights": "pending"
@@ -839,6 +1312,39 @@
       "pronunciationReview": "pending",
       "rights": "pending"
     },
+    "pink": {
+      "id": "pink-b0f7f12",
+      "text": "pink",
+      "locale": "en-US",
+      "category": "word-or-chunk",
+      "normal": "audio/en-US/pink-b0f7f12.mp3",
+      "supportive": "audio/en-US/pink-b0f7f12-slow.mp3",
+      "status": "needed",
+      "pronunciationReview": "pending",
+      "rights": "pending"
+    },
+    "purple circle": {
+      "id": "purple-circle-2e2d80e",
+      "text": "purple circle",
+      "locale": "en-US",
+      "category": "word-or-chunk",
+      "normal": "audio/en-US/purple-circle-2e2d80e.mp3",
+      "supportive": "audio/en-US/purple-circle-2e2d80e-slow.mp3",
+      "status": "needed",
+      "pronunciationReview": "pending",
+      "rights": "pending"
+    },
+    "purple square": {
+      "id": "purple-square-28aa11a",
+      "text": "purple square",
+      "locale": "en-US",
+      "category": "word-or-chunk",
+      "normal": "audio/en-US/purple-square-28aa11a.mp3",
+      "supportive": "audio/en-US/purple-square-28aa11a-slow.mp3",
+      "status": "needed",
+      "pronunciationReview": "pending",
+      "rights": "pending"
+    },
     "qu queen": {
       "id": "qu-queen-8e3c262",
       "text": "qu, queen",
@@ -879,6 +1385,17 @@
       "category": "word-or-chunk",
       "normal": "audio/en-US/rainbow-flag-64c24b7.mp3",
       "supportive": "audio/en-US/rainbow-flag-64c24b7-slow.mp3",
+      "status": "needed",
+      "pronunciationReview": "pending",
+      "rights": "pending"
+    },
+    "red": {
+      "id": "red-7898801",
+      "text": "red",
+      "locale": "en-US",
+      "category": "word-or-chunk",
+      "normal": "audio/en-US/red-7898801.mp3",
+      "supportive": "audio/en-US/red-7898801-slow.mp3",
       "status": "needed",
       "pronunciationReview": "pending",
       "rights": "pending"
@@ -960,6 +1477,50 @@
       "pronunciationReview": "pending",
       "rights": "pending"
     },
+    "seven": {
+      "id": "seven-a00bbe5",
+      "text": "seven",
+      "locale": "en-US",
+      "category": "word-or-chunk",
+      "normal": "audio/en-US/seven-a00bbe5.mp3",
+      "supportive": "audio/en-US/seven-a00bbe5-slow.mp3",
+      "status": "needed",
+      "pronunciationReview": "pending",
+      "rights": "pending"
+    },
+    "seven flags": {
+      "id": "seven-flags-e730d02",
+      "text": "Seven flags.",
+      "locale": "en-US",
+      "category": "word-or-chunk",
+      "normal": "audio/en-US/seven-flags-e730d02.mp3",
+      "supportive": "audio/en-US/seven-flags-e730d02-slow.mp3",
+      "status": "needed",
+      "pronunciationReview": "pending",
+      "rights": "pending"
+    },
+    "seven stars": {
+      "id": "seven-stars-89cb9c5",
+      "text": "seven stars",
+      "locale": "en-US",
+      "category": "word-or-chunk",
+      "normal": "audio/en-US/seven-stars-89cb9c5.mp3",
+      "supportive": "audio/en-US/seven-stars-89cb9c5-slow.mp3",
+      "status": "needed",
+      "pronunciationReview": "pending",
+      "rights": "pending"
+    },
+    "seventeen": {
+      "id": "seventeen-c1777d8",
+      "text": "seventeen",
+      "locale": "en-US",
+      "category": "word-or-chunk",
+      "normal": "audio/en-US/seventeen-c1777d8.mp3",
+      "supportive": "audio/en-US/seventeen-c1777d8-slow.mp3",
+      "status": "needed",
+      "pronunciationReview": "pending",
+      "rights": "pending"
+    },
     "shell flag": {
       "id": "shell-flag-2515e5e",
       "text": "shell flag",
@@ -971,6 +1532,39 @@
       "pronunciationReview": "pending",
       "rights": "pending"
     },
+    "six": {
+      "id": "six-bec9703",
+      "text": "six",
+      "locale": "en-US",
+      "category": "word-or-chunk",
+      "normal": "audio/en-US/six-bec9703.mp3",
+      "supportive": "audio/en-US/six-bec9703-slow.mp3",
+      "status": "needed",
+      "pronunciationReview": "pending",
+      "rights": "pending"
+    },
+    "six flags": {
+      "id": "six-flags-24081a9",
+      "text": "six flags",
+      "locale": "en-US",
+      "category": "word-or-chunk",
+      "normal": "audio/en-US/six-flags-24081a9.mp3",
+      "supportive": "audio/en-US/six-flags-24081a9-slow.mp3",
+      "status": "needed",
+      "pronunciationReview": "pending",
+      "rights": "pending"
+    },
+    "sixteen": {
+      "id": "sixteen-c0d94d0",
+      "text": "sixteen",
+      "locale": "en-US",
+      "category": "word-or-chunk",
+      "normal": "audio/en-US/sixteen-c0d94d0.mp3",
+      "supportive": "audio/en-US/sixteen-c0d94d0-slow.mp3",
+      "status": "needed",
+      "pronunciationReview": "pending",
+      "rights": "pending"
+    },
     "sort the words": {
       "id": "sort-the-words-349dadc",
       "text": "Sort the words",
@@ -978,6 +1572,17 @@
       "category": "phrase",
       "normal": "audio/en-US/sort-the-words-349dadc.mp3",
       "supportive": "audio/en-US/sort-the-words-349dadc-slow.mp3",
+      "status": "needed",
+      "pronunciationReview": "pending",
+      "rights": "pending"
+    },
+    "square": {
+      "id": "square-bfed89e",
+      "text": "square",
+      "locale": "en-US",
+      "category": "word-or-chunk",
+      "normal": "audio/en-US/square-bfed89e.mp3",
+      "supportive": "audio/en-US/square-bfed89e-slow.mp3",
       "status": "needed",
       "pronunciationReview": "pending",
       "rights": "pending"
@@ -1059,6 +1664,83 @@
       "pronunciationReview": "pending",
       "rights": "pending"
     },
+    "ten": {
+      "id": "ten-dd35624",
+      "text": "ten",
+      "locale": "en-US",
+      "category": "word-or-chunk",
+      "normal": "audio/en-US/ten-dd35624.mp3",
+      "supportive": "audio/en-US/ten-dd35624-slow.mp3",
+      "status": "needed",
+      "pronunciationReview": "pending",
+      "rights": "pending"
+    },
+    "ten boxes": {
+      "id": "ten-boxes-07d9861",
+      "text": "ten boxes",
+      "locale": "en-US",
+      "category": "word-or-chunk",
+      "normal": "audio/en-US/ten-boxes-07d9861.mp3",
+      "supportive": "audio/en-US/ten-boxes-07d9861-slow.mp3",
+      "status": "needed",
+      "pronunciationReview": "pending",
+      "rights": "pending"
+    },
+    "ten circles": {
+      "id": "ten-circles-8255fad",
+      "text": "Ten circles.",
+      "locale": "en-US",
+      "category": "word-or-chunk",
+      "normal": "audio/en-US/ten-circles-8255fad.mp3",
+      "supportive": "audio/en-US/ten-circles-8255fad-slow.mp3",
+      "status": "needed",
+      "pronunciationReview": "pending",
+      "rights": "pending"
+    },
+    "ten shells": {
+      "id": "ten-shells-f9fa6ec",
+      "text": "ten shells",
+      "locale": "en-US",
+      "category": "word-or-chunk",
+      "normal": "audio/en-US/ten-shells-f9fa6ec.mp3",
+      "supportive": "audio/en-US/ten-shells-f9fa6ec-slow.mp3",
+      "status": "needed",
+      "pronunciationReview": "pending",
+      "rights": "pending"
+    },
+    "the cargo is ready goodbye": {
+      "id": "the-cargo-is-ready-goodbye-a196374",
+      "text": "The cargo is ready! Goodbye!",
+      "locale": "en-US",
+      "category": "dialogue",
+      "normal": "audio/en-US/the-cargo-is-ready-goodbye-a196374.mp3",
+      "supportive": "audio/en-US/the-cargo-is-ready-goodbye-a196374-slow.mp3",
+      "status": "needed",
+      "pronunciationReview": "pending",
+      "rights": "pending"
+    },
+    "the reef is bright goodbye": {
+      "id": "the-reef-is-bright-goodbye-168f804",
+      "text": "The reef is bright! Goodbye!",
+      "locale": "en-US",
+      "category": "dialogue",
+      "normal": "audio/en-US/the-reef-is-bright-goodbye-168f804.mp3",
+      "supportive": "audio/en-US/the-reef-is-bright-goodbye-168f804-slow.mp3",
+      "status": "needed",
+      "pronunciationReview": "pending",
+      "rights": "pending"
+    },
+    "thirteen": {
+      "id": "thirteen-c24f5cf",
+      "text": "thirteen",
+      "locale": "en-US",
+      "category": "word-or-chunk",
+      "normal": "audio/en-US/thirteen-c24f5cf.mp3",
+      "supportive": "audio/en-US/thirteen-c24f5cf-slow.mp3",
+      "status": "needed",
+      "pronunciationReview": "pending",
+      "rights": "pending"
+    },
     "this is my flag goodbye": {
       "id": "this-is-my-flag-goodbye-a9c919e",
       "text": "This is my flag. Goodbye!",
@@ -1125,6 +1807,50 @@
       "pronunciationReview": "pending",
       "rights": "pending"
     },
+    "three": {
+      "id": "three-b802f38",
+      "text": "three",
+      "locale": "en-US",
+      "category": "word-or-chunk",
+      "normal": "audio/en-US/three-b802f38.mp3",
+      "supportive": "audio/en-US/three-b802f38-slow.mp3",
+      "status": "needed",
+      "pronunciationReview": "pending",
+      "rights": "pending"
+    },
+    "three blue stars": {
+      "id": "three-blue-stars-414256e",
+      "text": "three blue stars",
+      "locale": "en-US",
+      "category": "phrase",
+      "normal": "audio/en-US/three-blue-stars-414256e.mp3",
+      "supportive": "audio/en-US/three-blue-stars-414256e-slow.mp3",
+      "status": "needed",
+      "pronunciationReview": "pending",
+      "rights": "pending"
+    },
+    "three green stars": {
+      "id": "three-green-stars-a7a0bdc",
+      "text": "three green stars",
+      "locale": "en-US",
+      "category": "phrase",
+      "normal": "audio/en-US/three-green-stars-a7a0bdc.mp3",
+      "supportive": "audio/en-US/three-green-stars-a7a0bdc-slow.mp3",
+      "status": "needed",
+      "pronunciationReview": "pending",
+      "rights": "pending"
+    },
+    "three shells": {
+      "id": "three-shells-88a173f",
+      "text": "Three shells.",
+      "locale": "en-US",
+      "category": "word-or-chunk",
+      "normal": "audio/en-US/three-shells-88a173f.mp3",
+      "supportive": "audio/en-US/three-shells-88a173f-slow.mp3",
+      "status": "needed",
+      "pronunciationReview": "pending",
+      "rights": "pending"
+    },
     "tiger": {
       "id": "tiger-46e3d77",
       "text": "tiger",
@@ -1132,6 +1858,94 @@
       "category": "word-or-chunk",
       "normal": "audio/en-US/tiger-46e3d77.mp3",
       "supportive": "audio/en-US/tiger-46e3d77-slow.mp3",
+      "status": "needed",
+      "pronunciationReview": "pending",
+      "rights": "pending"
+    },
+    "triangle": {
+      "id": "triangle-b7d045c",
+      "text": "triangle",
+      "locale": "en-US",
+      "category": "word-or-chunk",
+      "normal": "audio/en-US/triangle-b7d045c.mp3",
+      "supportive": "audio/en-US/triangle-b7d045c-slow.mp3",
+      "status": "needed",
+      "pronunciationReview": "pending",
+      "rights": "pending"
+    },
+    "twelve": {
+      "id": "twelve-b521f93",
+      "text": "twelve",
+      "locale": "en-US",
+      "category": "word-or-chunk",
+      "normal": "audio/en-US/twelve-b521f93.mp3",
+      "supportive": "audio/en-US/twelve-b521f93-slow.mp3",
+      "status": "needed",
+      "pronunciationReview": "pending",
+      "rights": "pending"
+    },
+    "twelve boxes": {
+      "id": "twelve-boxes-89401f1",
+      "text": "twelve boxes",
+      "locale": "en-US",
+      "category": "word-or-chunk",
+      "normal": "audio/en-US/twelve-boxes-89401f1.mp3",
+      "supportive": "audio/en-US/twelve-boxes-89401f1-slow.mp3",
+      "status": "needed",
+      "pronunciationReview": "pending",
+      "rights": "pending"
+    },
+    "twenty": {
+      "id": "twenty-fc955a1",
+      "text": "twenty",
+      "locale": "en-US",
+      "category": "word-or-chunk",
+      "normal": "audio/en-US/twenty-fc955a1.mp3",
+      "supportive": "audio/en-US/twenty-fc955a1-slow.mp3",
+      "status": "needed",
+      "pronunciationReview": "pending",
+      "rights": "pending"
+    },
+    "two": {
+      "id": "two-ad782ec",
+      "text": "two",
+      "locale": "en-US",
+      "category": "word-or-chunk",
+      "normal": "audio/en-US/two-ad782ec.mp3",
+      "supportive": "audio/en-US/two-ad782ec-slow.mp3",
+      "status": "needed",
+      "pronunciationReview": "pending",
+      "rights": "pending"
+    },
+    "two blue shells": {
+      "id": "two-blue-shells-4a3e6c7",
+      "text": "two blue shells",
+      "locale": "en-US",
+      "category": "phrase",
+      "normal": "audio/en-US/two-blue-shells-4a3e6c7.mp3",
+      "supportive": "audio/en-US/two-blue-shells-4a3e6c7-slow.mp3",
+      "status": "needed",
+      "pronunciationReview": "pending",
+      "rights": "pending"
+    },
+    "two blue stars": {
+      "id": "two-blue-stars-3ee68da",
+      "text": "two blue stars",
+      "locale": "en-US",
+      "category": "phrase",
+      "normal": "audio/en-US/two-blue-stars-3ee68da.mp3",
+      "supportive": "audio/en-US/two-blue-stars-3ee68da-slow.mp3",
+      "status": "needed",
+      "pronunciationReview": "pending",
+      "rights": "pending"
+    },
+    "two red shells": {
+      "id": "two-red-shells-b4f596e",
+      "text": "two red shells",
+      "locale": "en-US",
+      "category": "phrase",
+      "normal": "audio/en-US/two-red-shells-b4f596e.mp3",
+      "supportive": "audio/en-US/two-red-shells-b4f596e-slow.mp3",
       "status": "needed",
       "pronunciationReview": "pending",
       "rights": "pending"
@@ -1257,6 +2071,17 @@
       "pronunciationReview": "pending",
       "rights": "pending"
     },
+    "what color is it": {
+      "id": "what-color-is-it-eed7f4b",
+      "text": "What color is it?",
+      "locale": "en-US",
+      "category": "phrase",
+      "normal": "audio/en-US/what-color-is-it-eed7f4b.mp3",
+      "supportive": "audio/en-US/what-color-is-it-eed7f4b-slow.mp3",
+      "status": "needed",
+      "pronunciationReview": "pending",
+      "rights": "pending"
+    },
     "what's your name": {
       "id": "whats-your-name-c88dda5",
       "text": "What's your name?",
@@ -1264,6 +2089,17 @@
       "category": "phrase",
       "normal": "audio/en-US/whats-your-name-c88dda5.mp3",
       "supportive": "audio/en-US/whats-your-name-c88dda5-slow.mp3",
+      "status": "needed",
+      "pronunciationReview": "pending",
+      "rights": "pending"
+    },
+    "white": {
+      "id": "white-528cef8",
+      "text": "white",
+      "locale": "en-US",
+      "category": "word-or-chunk",
+      "normal": "audio/en-US/white-528cef8.mp3",
+      "supportive": "audio/en-US/white-528cef8-slow.mp3",
       "status": "needed",
       "pronunciationReview": "pending",
       "rights": "pending"
@@ -1319,6 +2155,28 @@
       "category": "word-or-chunk",
       "normal": "audio/en-US/y-yo-yo-196adb5.mp3",
       "supportive": "audio/en-US/y-yo-yo-196adb5-slow.mp3",
+      "status": "needed",
+      "pronunciationReview": "pending",
+      "rights": "pending"
+    },
+    "yellow": {
+      "id": "yellow-96de554",
+      "text": "yellow",
+      "locale": "en-US",
+      "category": "word-or-chunk",
+      "normal": "audio/en-US/yellow-96de554.mp3",
+      "supportive": "audio/en-US/yellow-96de554-slow.mp3",
+      "status": "needed",
+      "pronunciationReview": "pending",
+      "rights": "pending"
+    },
+    "yellow triangle": {
+      "id": "yellow-triangle-ce41142",
+      "text": "yellow triangle",
+      "locale": "en-US",
+      "category": "word-or-chunk",
+      "normal": "audio/en-US/yellow-triangle-ce41142.mp3",
+      "supportive": "audio/en-US/yellow-triangle-ce41142-slow.mp3",
       "status": "needed",
       "pronunciationReview": "pending",
       "rights": "pending"

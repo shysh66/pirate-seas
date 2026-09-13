@@ -7,7 +7,7 @@ Pirate Seas is a browser-based English-learning game for Hebrew-speaking childre
 - Starting Harbor (נמל ההתחלה) as the first-run experience.
 - The Launching Cove: six foundation units and 26 core missions.
 - Eleven activity types, including boat navigation, sound sorting, memory matching, word transformation, construction, dialogue, and checkpoints.
-- Name Island rebuilt as a seven-mission content pack using the same activity framework.
+- Three seven-mission Pre-A1 chapters using the same activity framework: Name Island, Rainbow Reef (colors and quantities 1–5), and Counting Cove (numbers 6–20 and shapes).
 - Sequential unlocks, replayable completed missions, coins, unit pearls, local persistence, and migration from the earlier prototype save.
 - Hebrew RTL interface with isolated LTR English content.
 - Per-item receptive, literacy, and guided-production evidence with a due-review dock; completion is kept separate from remembered knowledge.
@@ -28,7 +28,7 @@ node scripts/build-audio-manifest.cjs --check
 node tests/smoke.cjs
 ```
 
-The checks validate the 123-clip audio inventory, content contract, all 33 implemented missions, combined learning track, activity variety, item evidence, spaced review, transactional rewards, progression, persistence, retry behavior, and generated inline handlers.
+The checks validate the 201-clip audio inventory, content contract, all 47 implemented missions across 9 locations, combined learning track, activity variety, item evidence, spaced review, transactional rewards, progression, persistence, retry behavior, and generated inline handlers.
 
 ## Documents
 
@@ -40,4 +40,4 @@ The checks validate the 123-clip audio inventory, content contract, all 33 imple
 
 ## Next milestone
 
-Finish M1 by producing and reviewing the inventoried neural audio files and running a repeat tablet playtest. Then use the reusable unit contract to implement Rainbow Reef.
+Finish M1 by producing and reviewing the inventoried neural audio files and running a repeat tablet playtest. Then continue M2 with Toy Treasure, followed by Animal Island.

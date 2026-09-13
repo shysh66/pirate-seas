@@ -1,8 +1,8 @@
 # Pirate Seas: complete learning journey, ABC → A1 → A2
 
-Design proposal · revised 13 September 2026 · Detailed through A1; A2 is a roadmap.
+Design proposal · revised 14 September 2026 · Detailed through A1; A2 is a roadmap.
 
-This document expands and revises the existing curriculum, Island 3/4 specifications, and technical architecture. It remains a design specification, not a claim that the entire journey exists. The deployed browser prototype now includes Starting Harbor, five foundation units, and a reusable seven-mission Name Island. Later islands, production recordings/artwork, a true retention model, and the full assessment system still require implementation and content production.
+This document expands and revises the existing curriculum, Island 3/4 specifications, and technical architecture. It remains a design specification, not a claim that the entire journey exists. The deployed browser prototype now includes Starting Harbor, five additional foundation units, and three reusable seven-mission Pre-A1 chapters: Name Island, Rainbow Reef, and Counting Cove. Later islands, production recordings/artwork, reviewed recordings, and the full assessment system still require implementation and content production.
 
 ## 1. Product decision and destination
 
@@ -553,7 +553,7 @@ Persist after each meaningful checkpoint. Completion, memory updates, and reward
 | M5 Complete A1 | A09–A16, A1 profile, parent observations | Comparisons, past, short narrative, practical reading/writing, and communication assessed separately |
 | M6 A2 production | Full inventories/scripts for B01–B12 | Proceed after A1 retention and production data support the design |
 
-**Implementation status, 13 September 2026:** the M1 reliability code now includes item-level evidence, due-time review scheduling, separately labeled journey progress and delayed memory, stable attempt IDs, idempotent reward transactions, and a vendor-neutral 123-clip recorded-audio inventory with device-voice fallback. The Name Island audit now introduces people before retrieval, replaces the unsupported *girl* spelling task with decodable *man*, and models *wave/walk* before testing commands. M1 remains open until reviewed normal/supportive MP3 files populate the inventory and a repeat low-spec tablet playtest confirms audio pacing, review comprehension, save recovery, and no duplicate rewards.
+**Implementation status, 14 September 2026:** the reusable build now contains 9 sequential map locations and 47 missions. Rainbow Reef implements colors and quantities 1–5 across exploration, memory, combined color/quantity choices, phrase building, retrieval, and an octopus dialogue. Counting Cove implements numbers 6–20 and shapes across number exposure, counted-set choices, phrase building, color/shape sorting, and a cargo dialogue. The reliability layer includes item-level evidence, due-time review scheduling, separately labeled journey progress and delayed memory, stable attempt IDs, idempotent reward transactions, and a vendor-neutral 201-clip recorded-audio inventory with device-voice fallback. M1 remains open until reviewed normal/supportive MP3 files populate the inventory and a repeat low-spec tablet playtest confirms audio pacing, review comprehension, save recovery, and no duplicate rewards. M2 now continues with Toy Treasure and Animal Island.
 
 For each major mechanic, observe at least five children in each relevant learner mode as an initial usability check, including low-spec tablet sessions. This is a small design pilot, not an efficacy study. Include repeat visits to test delayed retrieval; a single sitting cannot validate spaced learning.
 

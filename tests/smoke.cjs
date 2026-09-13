@@ -62,6 +62,18 @@ assert.equal(nameIsland.missions.length, 7);
 assert.equal(nameIsland.missions[0].kind, 'collect', 'Name Island should introduce people before testing retrieval');
 assert.deepEqual(Array.from(nameIsland.missions[2].target), ['m', 'a', 'n'], 'Name Island literacy should use an eligible word instead of untaught ir');
 assert.equal(nameIsland.missions[3].models.length, 2, 'New action verbs should be modeled before the command challenge');
+const rainbowReef = api.CONTENT.find(unit => unit.id === 'P02');
+const countingCove = api.CONTENT.find(unit => unit.id === 'P03');
+assert.equal(rainbowReef.missions.length, 7, 'Rainbow Reef should be a complete seven-mission chapter');
+assert.equal(countingCove.missions.length, 7, 'Counting Cove should be a complete seven-mission chapter');
+assert.equal(api.CONTENT.indexOf(rainbowReef), api.CONTENT.indexOf(nameIsland) + 1, 'Rainbow Reef should follow Name Island');
+assert.equal(api.CONTENT.indexOf(countingCove), api.CONTENT.indexOf(rainbowReef) + 1, 'Counting Cove should follow Rainbow Reef');
+assert.deepEqual(Array.from(rainbowReef.missions[0].items, item => item.id), ['red', 'blue', 'yellow', 'green', 'orange', 'pink', 'black', 'white']);
+assert.deepEqual(Array.from(rainbowReef.missions[1].pairs, pair => pair.id), ['one', 'two', 'three', 'four', 'five']);
+assert.deepEqual(Array.from(countingCove.missions.slice(0, 2).flatMap(mission => mission.items), item => item.id), [
+  'six', 'seven', 'eight', 'nine', 'ten', 'eleven', 'twelve', 'thirteen', 'fourteen', 'fifteen', 'sixteen', 'seventeen', 'eighteen', 'nineteen', 'twenty'
+]);
+assert.deepEqual(Array.from(countingCove.missions[2].items, item => item.id), ['circle', 'square', 'triangle']);
 assert(new Set(api.CONTENT.flatMap(unit => unit.missions.map(mission => mission.kind))).size >= 10, 'The journey should contain at least ten distinct activity types');
 for (const mission of api.CONTENT.find(unit => unit.id === 'F00').missions) {
   assert([...mission.instructionHe].length <= 30, `${mission.id}: Starting Harbor instruction is too long for young children`);
@@ -80,8 +92,8 @@ assert.doesNotMatch(app.innerHTML, /נמל ברוכים הבאים/, 'The first 
 assert.match(app.innerHTML, /אי השמות/);
 assert.match(app.innerHTML, /class="sea-map"/, 'Main screen should render a visual sea map');
 assert.match(app.innerHTML, /class="sea-route-lines"/, 'Visual map should connect locations with a route');
-assert.equal((app.innerHTML.match(/class="map-location/g) || []).length, 7, 'Visual map should show every location');
-assert.equal((app.innerHTML.match(/class="location-tooltip"/g) || []).length, 7, 'Every location should expose hover information');
+assert.equal((app.innerHTML.match(/class="map-location/g) || []).length, api.CONTENT.length, 'Visual map should show every location');
+assert.equal((app.innerHTML.match(/class="location-tooltip"/g) || []).length, api.CONTENT.length, 'Every location should expose hover information');
 assert.match(app.innerHTML, /מה לומדים כאן\?/);
 assert.match(app.innerHTML, /map-location location-0[^>]*current/, 'Current location should be highlighted');
 assert.match(app.innerHTML, /map-location location-1[^>]*locked[^>]*aria-disabled="true"/, 'Future locations should remain locked and focusable');
@@ -148,7 +160,8 @@ assert.equal(finalState.pearls, api.CONTENT.length, 'One pearl should be awarded
 assert(finalState.coins > 0, 'Coins should be awarded');
 assert(finalState.evidence.length > 50, 'Activities should emit item-level learning evidence');
 assert(Object.keys(finalState.memory).length > 30, 'Activities should create per-skill memory records');
-assert.equal(Object.keys(finalState.transactions).filter(key => key.startsWith('mission:')).length, 33, 'Each mission reward should have one transaction');
+const missionCount = api.CONTENT.reduce((sum, unit) => sum + unit.missions.length, 0);
+assert.equal(Object.keys(finalState.transactions).filter(key => key.startsWith('mission:')).length, missionCount, 'Each mission reward should have one transaction');
 assert.equal(Object.keys(finalState.transactions).filter(key => key.startsWith('unit:')).length, api.CONTENT.length, 'Each unit reward should have one transaction');
 assert(Object.values(finalState.memory).every(record => record.level < 3), 'Same-session success must not be presented as remembered knowledge');
 assert(saved.has('pirate-seas-v2'), 'Progress should persist');
@@ -258,4 +271,16 @@ run("previewModel('wave'); previewModel('walk')");
 assert.equal((app.innerHTML.match(/class="card"[^>]*disabled/g) || []).length, 0, 'Modeled actions should unlock the command choices');
 assert.equal(api.getState().evidence.filter(event => event.activity === 'model').length, 2);
 
-console.log(`Passed: ${api.CONTENT.length} units, 33 missions, 11 activity types, audio inventory, evidence, spaced review, transactional rewards, Name Island modeling, persistence, retries, and inline handlers.`);
+run("state = freshState(); state.progress.P02 = 3; startMission('P02', 3)");
+assert.match(app.innerHTML, /two red shells/, 'Rainbow Reef should combine visible color and quantity evidence');
+assert.match(app.innerHTML, /🔴🔴/);
+run("state = freshState(); state.progress.P02 = 6; startMission('P02', 6)");
+assert.match(app.innerHTML, /Hear Rainbow Octopus/, 'Rainbow Reef dialogue should use its own character');
+
+run("state = freshState(); state.progress.P03 = 5; startMission('P03', 5)");
+assert.match(app.innerHTML, /purple circle/, 'Counting Cove should reuse colors while sorting shapes');
+assert.equal((app.innerHTML.match(/class="sound-bucket/g) || []).length, 3);
+run("state = freshState(); state.progress.P03 = 6; startMission('P03', 6)");
+assert.match(app.innerHTML, /Hear Cargo Keeper/, 'Counting Cove dialogue should use its own character');
+
+console.log(`Passed: ${api.CONTENT.length} units, ${api.CONTENT.reduce((sum, unit) => sum + unit.missions.length, 0)} missions, 11 activity types, audio inventory, evidence, spaced review, transactional rewards, three Pre-A1 chapters, persistence, retries, and inline handlers.`);

@@ -1,7 +1,7 @@
 /* Pirate Seas — dependency-free curriculum prototype. */
 const STORAGE_KEY = "pirate-seas-v2";
 const STATE_VERSION = 5;
-const CONTENT_VERSION = 1;
+const CONTENT_VERSION = 2;
 const DAY_MS = 24 * 60 * 60 * 1000;
 const REVIEW_INTERVAL_DAYS = [0, 1, 3, 7, 14, 30];
 const MAX_EVIDENCE_EVENTS = 800;
@@ -147,6 +147,87 @@ const CONTENT = [
         { npc: "Welcome to Name Island! Goodbye!", good: "Goodbye!", options: ["Goodbye!", "Hello!"] }
       ] }
     ]
+  },
+  {
+    id: "P02", world: "pre-a1", icon: "🌈", nameHe: "שונית הקשת", nameEn: "Rainbow Reef",
+    summaryHe: "מכירים צבעים, סופרים מאחת עד חמש ומתארים אוצר צבעוני.", reward: 55,
+    missions: [
+      { id: "P02-M01", icon: "🎨", nameHe: "צובעים את השונית", kind: "collect", instructionHe: "געו בכל צבע ושמעו.", items: [
+        O("red", "🔴", "red"), O("blue", "🔵", "blue"), O("yellow", "🟡", "yellow"), O("green", "🟢", "green"),
+        O("orange", "🟠", "orange"), O("pink", "🩷", "pink"), O("black", "⚫", "black"), O("white", "⚪", "white")
+      ] },
+      { id: "P02-M02", icon: "⭐", nameHe: "כוכבים בזוגות", kind: "memory", instructionHe: "מצאו תמונה ומספר תואמים.", pairs: [
+        { id: "one", emoji: "⭐", word: "one" },
+        { id: "two", emoji: "⭐⭐", word: "two" },
+        { id: "three", emoji: "⭐⭐⭐", word: "three" },
+        { id: "four", emoji: "⭐⭐⭐⭐", word: "four" },
+        { id: "five", emoji: "⭐⭐⭐⭐⭐", word: "five" }
+      ] },
+      { id: "P02-M03", icon: "🐙", nameHe: "איזה צבע?", kind: "choice", instructionHe: "שמעו ובחרו צבע.", rounds: [
+        { say: "red", answer: "red", options: [O("red", "🔴", "red"), O("blue", "🔵", "blue"), O("yellow", "🟡", "yellow")] },
+        { say: "green", answer: "green", options: [O("orange", "🟠", "orange"), O("green", "🟢", "green"), O("pink", "🩷", "pink")] },
+        { say: "black", answer: "black", options: [O("white", "⚪", "white"), O("blue", "🔵", "blue"), O("black", "⚫", "black")] }
+      ] },
+      { id: "P02-M04", icon: "🐚", nameHe: "צבע וכמות", kind: "choice", instructionHe: "שמעו ומצאו את הקבוצה.", rounds: [
+        { say: "two red shells", answer: "two-red-shells", options: [O("one-red-shell", "🔴", "one red shell", "one red shell"), O("two-red-shells", "🔴🔴", "two red shells", "two red shells"), O("two-blue-shells", "🔵🔵", "two blue shells", "two blue shells")] },
+        { say: "three blue stars", answer: "three-blue-stars", options: [O("three-blue-stars", "🔵🔵🔵", "three blue stars", "three blue stars"), O("two-blue-stars", "🔵🔵", "two blue stars", "two blue stars"), O("three-green-stars", "🟢🟢🟢", "three green stars", "three green stars")] },
+        { say: "five yellow stars", answer: "five-yellow-stars", options: [O("four-yellow-stars", "🟡🟡🟡🟡", "four yellow stars", "four yellow stars"), O("five-orange-stars", "🟠🟠🟠🟠🟠", "five orange stars", "five orange stars"), O("five-yellow-stars", "🟡🟡🟡🟡🟡", "five yellow stars", "five yellow stars")] }
+      ] },
+      { id: "P02-M05", icon: "🪣", nameHe: "בונים תיאור", kind: "sequence", instructionHe: "בנו: a red shell", say: "a red shell", target: ["a", "red", "shell"], picture: "🔴🐚", result: "a red shell" },
+      { id: "P02-M06", icon: "💎", nameHe: "אוצר הקשת", kind: "checkpoint", instructionHe: "שמעו ומצאו את האוצר.", rounds: [
+        { say: "Hello!", answer: "hello", options: [O("hello", "👋", "Hello!"), O("goodbye", "⛵", "Goodbye!"), O("friend", "🧑‍🤝‍🧑", "friend")] },
+        { say: "a green star", answer: "green-star", options: [O("green-star", "🟢⭐", "a green star", "a green star"), O("yellow-star", "🟡⭐", "a yellow star", "a yellow star"), O("green-shell", "🟢🐚", "a green shell", "a green shell")] },
+        { say: "four shells", answer: "four-shells", options: [O("three-shells", "🐚🐚🐚", "three shells", "three shells"), O("four-shells", "🐚🐚🐚🐚", "four shells", "four shells"), O("five-shells", "🐚🐚🐚🐚🐚", "five shells", "five shells")] }
+      ] },
+      { id: "P02-M07", icon: "🐙", nameHe: "התמנון הצבעוני", kind: "dialogue", instructionHe: "עזרו לתמנון בצבעים ובספירה.", character: "🐙", speaker: "Rainbow Octopus", turns: [
+        { npc: "Hello!", good: "Hello!", options: ["Hello!", "Goodbye!"] },
+        { npc: "What color is it?", good: "It's red.", options: ["It's red.", "It's five."] },
+        { npc: "How many shells?", good: "Three shells.", options: ["Three shells.", "A blue shell."] },
+        { npc: "Look! What is it?", good: "It's a blue star.", options: ["It's a blue star.", "It's orange."] },
+        { npc: "The reef is bright! Goodbye!", good: "Goodbye!", options: ["Goodbye!", "Hello!"] }
+      ] }
+    ]
+  },
+  {
+    id: "P03", world: "pre-a1", icon: "🔢", nameHe: "מפרץ הספירה", nameEn: "Counting Cove",
+    summaryHe: "סופרים משש עד עשרים, מזהים צורות ואומרים גיל וכמות.", reward: 60,
+    missions: [
+      { id: "P03-M01", icon: "📦", nameHe: "מטען 6 עד 12", kind: "collect", instructionHe: "געו בכל מספר ושמעו.", items: [
+        O("six", "📦 × 6", "six"), O("seven", "📦 × 7", "seven"), O("eight", "📦 × 8", "eight"), O("nine", "📦 × 9", "nine"),
+        O("ten", "📦 × 10", "ten"), O("eleven", "📦 × 11", "eleven"), O("twelve", "📦 × 12", "twelve")
+      ] },
+      { id: "P03-M02", icon: "🚢", nameHe: "מטען 13 עד 20", kind: "collect", instructionHe: "געו בכל מספר ושמעו.", items: [
+        O("thirteen", "🚢 × 13", "thirteen"), O("fourteen", "🚢 × 14", "fourteen"), O("fifteen", "🚢 × 15", "fifteen"), O("sixteen", "🚢 × 16", "sixteen"),
+        O("seventeen", "🚢 × 17", "seventeen"), O("eighteen", "🚢 × 18", "eighteen"), O("nineteen", "🚢 × 19", "nineteen"), O("twenty", "🚢 × 20", "twenty")
+      ] },
+      { id: "P03-M03", icon: "🔷", nameHe: "מגלים צורות", kind: "collect", instructionHe: "געו בכל צורה ושמעו.", items: [
+        O("circle", "●", "circle"), O("square", "■", "square"), O("triangle", "▲", "triangle")
+      ] },
+      { id: "P03-M04", icon: "🚩", nameHe: "סופרים משלוחים", kind: "choice", instructionHe: "ספרו ובחרו את המשלוח.", rounds: [
+        { say: "six flags", answer: "six-flags", options: [O("five-flags", "🚩🚩🚩🚩🚩", "five flags", "five flags"), O("six-flags", "🚩🚩🚩🚩🚩🚩", "six flags", "six flags"), O("seven-flags", "🚩🚩🚩🚩🚩🚩🚩", "seven flags", "seven flags")] },
+        { say: "eight stars", answer: "eight-stars", options: [O("eight-stars", "★★★★★★★★", "eight stars", "eight stars"), O("nine-stars", "★★★★★★★★★", "nine stars", "nine stars"), O("seven-stars", "★★★★★★★", "seven stars", "seven stars")] },
+        { say: "ten shells", answer: "ten-shells", options: [O("nine-shells", "🐚🐚🐚🐚🐚🐚🐚🐚🐚", "nine shells", "nine shells"), O("eleven-shells", "🐚🐚🐚🐚🐚🐚🐚🐚🐚🐚🐚", "eleven shells", "eleven shells"), O("ten-shells", "🐚🐚🐚🐚🐚🐚🐚🐚🐚🐚", "ten shells", "ten shells")] },
+        { say: "twelve boxes", answer: "twelve-boxes", options: [O("twelve-boxes", "■■■■■■■■■■■■", "twelve boxes", "twelve boxes"), O("ten-boxes", "■■■■■■■■■■", "ten boxes", "ten boxes"), O("eleven-boxes", "■■■■■■■■■■■", "eleven boxes", "eleven boxes")] }
+      ] },
+      { id: "P03-M05", icon: "🎂", nameHe: "אומרים גיל", kind: "sequence", instructionHe: "בנו: I am seven", say: "I am seven", target: ["I", "am", "seven"], picture: "🎂", result: "I am seven" },
+      { id: "P03-M06", icon: "🧺", nameHe: "ממיינים צורות", kind: "sort", instructionHe: "בחרו צורה ושימו בסל.", buckets: [
+        { id: "circle", label: "circle", emoji: "●" }, { id: "square", label: "square", emoji: "■" }, { id: "triangle", label: "triangle", emoji: "▲" }
+      ], items: [
+        { id: "purple-circle", emoji: "🟣 ●", label: "purple circle", audio: "purple circle", bucket: "circle" },
+        { id: "brown-circle", emoji: "🟤 ●", label: "brown circle", audio: "brown circle", bucket: "circle" },
+        { id: "purple-square", emoji: "🟪 ■", label: "purple square", audio: "purple square", bucket: "square" },
+        { id: "brown-square", emoji: "🟫 ■", label: "brown square", audio: "brown square", bucket: "square" },
+        { id: "gray-triangle", emoji: "🩶 ▲", label: "gray triangle", audio: "gray triangle", bucket: "triangle" },
+        { id: "yellow-triangle", emoji: "🟡 ▲", label: "yellow triangle", audio: "yellow triangle", bucket: "triangle" }
+      ] },
+      { id: "P03-M07", icon: "🧑‍✈️", nameHe: "שומר המטען", kind: "dialogue", instructionHe: "ענו לשומר על מספרים וצורות.", character: "🧑‍✈️", speaker: "Cargo Keeper", turns: [
+        { npc: "Hello!", good: "Hello!", options: ["Hello!", "Goodbye!"] },
+        { npc: "How many flags?", good: "Seven flags.", options: ["Seven flags.", "A red flag."] },
+        { npc: "How many circles?", good: "Ten circles.", options: ["Ten circles.", "A purple circle."] },
+        { npc: "How old are you?", good: "I'm eight.", options: ["I'm eight.", "Eight circles."] },
+        { npc: "The cargo is ready! Goodbye!", good: "Goodbye!", options: ["Goodbye!", "Hello!"] }
+      ] }
+    ]
   }
 ];
 
@@ -160,14 +241,14 @@ let state = loadState();
 
 function freshState() {
   return {
-    version: STATE_VERSION, routeVersion: 1, mode: "combined", coins: 0, pearls: 0, avatar: "🦜", flag: null,
+    version: STATE_VERSION, routeVersion: 2, mode: "combined", coins: 0, pearls: 0, avatar: "🦜", flag: null,
     progress: {}, attempts: {}, replays: {}, memory: {}, evidence: [], transactions: {}
   };
 }
 
 function normalizeState(saved = {}) {
   return {
-    ...freshState(), ...saved, version: STATE_VERSION, routeVersion: 1, mode: "combined",
+    ...freshState(), ...saved, version: STATE_VERSION, routeVersion: 2, mode: "combined",
     progress: { ...(saved.progress || {}) }, attempts: { ...(saved.attempts || {}) }, replays: { ...(saved.replays || {}) },
     memory: { ...(saved.memory || {}) }, evidence: Array.isArray(saved.evidence) ? saved.evidence.slice(-MAX_EVIDENCE_EVENTS) : [],
     transactions: { ...(saved.transactions || {}) }
@@ -462,7 +543,7 @@ function showWorld() {
   const foundationDone = CONTENT.filter(unit => unit.world === "foundations" && isComplete(unit.id)).length;
   const due = dueReviewPrompts();
   const reviewDock = `<div class="review-dock"><span aria-hidden="true">🧭</span><div><b>צלילת חזרה</b><small>${due.length ? `${due.length} פריטים מחכים לתרגול קצר` : "אין פריטים שמחכים עכשיו"}</small></div><button class="${due.length ? "primary" : "secondary"}" ${due.length ? "onclick=\"startReview()\"" : "disabled"}>${due.length ? "מתרגלים" : "הכול מוכן"}</button></div>`;
-  shell(`<section class="panel world-panel"><div class="world-heading"><div><p class="eyebrow">The Launching Cove</p><h2>מפת ההתחלה</h2><p>בנו את הסירה, האירו את המגדלור ואז הפליגו לאי השמות.</p></div><span class="combined-track">🎧 + 📖 מסלול משולב</span></div>${reviewDock}<div class="voyage-progress"><span>יסודות ${foundationDone} / 6</span><div class="meter"><span style="width:${foundationDone / 6 * 100}%"></span></div></div><div class="sea-map"><div class="map-compass" aria-hidden="true">✦<small>צ</small></div><span class="map-decoration cloud" aria-hidden="true">☁️</span><span class="map-decoration whale" aria-hidden="true">🐋</span><span class="map-decoration waves" aria-hidden="true">〰 〰 〰</span><svg class="sea-route-lines" viewBox="0 0 1000 520" preserveAspectRatio="none" aria-hidden="true"><path class="route-shadow" d="M875 120 C790 55 710 180 625 120 S460 60 375 120 S205 180 125 120 C55 205 55 315 125 390 C205 330 295 450 375 390 S545 330 625 390"/><path class="route-dashes" d="M875 120 C790 55 710 180 625 120 S460 60 375 120 S205 180 125 120 C55 205 55 315 125 390 C205 330 295 450 375 390 S545 330 625 390"/></svg><div class="world-route">${cards}</div></div><div class="map-legend"><span><i class="legend-dot current-dot"></i>המקום הנוכחי</span><span><i class="legend-dot done-dot"></i>הושלם</span><span><i class="legend-dot locked-dot"></i>נעול</span></div><div class="map-actions"><button class="secondary" onclick="resetGame()">התחלה חדשה</button><span>המשימה הבאה: ${esc(CONTENT[currentIndex].nameHe)}</span></div></section>`);
+  shell(`<section class="panel world-panel"><div class="world-heading"><div><p class="eyebrow">The Launching Cove</p><h2>מפת ההתחלה</h2><p>בנו את הסירה, האירו את המגדלור והמשיכו מאי השמות אל שונית הקשת ומפרץ הספירה.</p></div><span class="combined-track">🎧 + 📖 מסלול משולב</span></div>${reviewDock}<div class="voyage-progress"><span>יסודות ${foundationDone} / 6</span><div class="meter"><span style="width:${foundationDone / 6 * 100}%"></span></div></div><div class="sea-map"><div class="map-compass" aria-hidden="true">✦<small>צ</small></div><span class="map-decoration cloud" aria-hidden="true">☁️</span><span class="map-decoration whale" aria-hidden="true">🐋</span><span class="map-decoration waves" aria-hidden="true">〰 〰 〰</span><svg class="sea-route-lines" viewBox="0 0 1000 560" preserveAspectRatio="none" aria-hidden="true"><path class="route-shadow" d="M900 120 C830 55 770 180 700 120 S570 55 500 120 S370 180 300 120 S170 55 100 120 C35 210 35 340 100 430 C170 365 230 490 300 430 S430 365 500 430 S630 490 700 430"/><path class="route-dashes" d="M900 120 C830 55 770 180 700 120 S570 55 500 120 S370 180 300 120 S170 55 100 120 C35 210 35 340 100 430 C170 365 230 490 300 430 S430 365 500 430 S630 490 700 430"/></svg><div class="world-route">${cards}</div></div><div class="map-legend"><span><i class="legend-dot current-dot"></i>המקום הנוכחי</span><span><i class="legend-dot done-dot"></i>הושלם</span><span><i class="legend-dot locked-dot"></i>נעול</span></div><div class="map-actions"><button class="secondary" onclick="resetGame()">התחלה חדשה</button><span>המשימה הבאה: ${esc(CONTENT[currentIndex].nameHe)}</span></div></section>`);
 }
 
 function showUnit(unitId) {
@@ -588,7 +669,7 @@ const RENDERERS = {
   },
   dialogue(mission) {
     const turn = mission.turns[session.round];
-    activityFrame(mission, `<div class="boss-scene"><figure>🏴‍☠️</figure><div class="prompt english">${esc(turn.npc)}<br><button class="secondary" onclick="replaySpeech(${jsArg(turn.npc)})">🔊 Hear Captain Morgan</button></div></div><div class="choice-grid">${shuffle(turn.options).map(option => `<button class="choice english" onclick="chooseDialogue(${jsArg(option)})">${esc(option)}</button>`).join("")}</div><p class="center"><button class="secondary" onclick="replaySpeech(${jsArg(turn.good)})">🎤 Say it with me</button></p><div class="status-row"><span class="status-chip english">${session.round + 1} / ${mission.turns.length}</span></div>`, "boss");
+    activityFrame(mission, `<div class="boss-scene"><figure>${mission.character || "🏴‍☠️"}</figure><div class="prompt english">${esc(turn.npc)}<br><button class="secondary" onclick="replaySpeech(${jsArg(turn.npc)})">🔊 Hear ${esc(mission.speaker || "Captain Morgan")}</button></div></div><div class="choice-grid">${shuffle(turn.options).map(option => `<button class="choice english" onclick="chooseDialogue(${jsArg(option)})">${esc(option)}</button>`).join("")}</div><p class="center"><button class="secondary" onclick="replaySpeech(${jsArg(turn.good)})">🎤 Say it with me</button></p><div class="status-row"><span class="status-chip english">${session.round + 1} / ${mission.turns.length}</span></div>`, "boss");
   }
 };
 
