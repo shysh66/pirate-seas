@@ -142,15 +142,20 @@ let session = null;
 let state = loadState();
 
 function freshState() {
-  return { version: 3, routeVersion: 1, mode: null, coins: 0, pearls: 0, avatar: "🦜", flag: null, progress: {}, attempts: {} };
+  return { version: 4, routeVersion: 1, mode: "combined", coins: 0, pearls: 0, avatar: "🦜", flag: null, progress: {}, attempts: {} };
 }
 
 function loadState() {
   try {
     const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
-    if (saved?.version === 3) return { ...freshState(), ...saved, progress: saved.progress || {}, attempts: saved.attempts || {} };
+    if (saved?.version === 4) return { ...freshState(), ...saved, mode: "combined", progress: saved.progress || {}, attempts: saved.attempts || {} };
+    if (saved?.version === 3) {
+      const migrated = { ...freshState(), ...saved, version: 4, mode: "combined", progress: saved.progress || {}, attempts: saved.attempts || {} };
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(migrated));
+      return migrated;
+    }
     if (saved?.version === 2) {
-      const migrated = { ...freshState(), ...saved, version: 3, routeVersion: 1, progress: { ...(saved.progress || {}) }, attempts: saved.attempts || {} };
+      const migrated = { ...freshState(), ...saved, version: 4, routeVersion: 1, mode: "combined", progress: { ...(saved.progress || {}) }, attempts: saved.attempts || {} };
       const foundations = CONTENT.filter(unit => unit.world === "foundations");
       const wasAutoCompleted = saved.pearls === 0 && foundations.every(unit => (saved.progress?.[unit.id] || 0) >= unit.missions.length);
       if (wasAutoCompleted) foundations.forEach(unit => { delete migrated.progress[unit.id]; });
@@ -160,7 +165,6 @@ function loadState() {
     const old = JSON.parse(localStorage.getItem("pirate-seas-mvp"));
     if (old?.mode) {
       const migrated = freshState();
-      migrated.mode = old.mode;
       migrated.coins = old.coins || 0;
       migrated.pearls = old.pearls || 0;
       migrated.progress.P01 = Math.max(0, Math.min(7, old.level || 0));
@@ -190,10 +194,10 @@ function isComplete(unitId) { return getProgress(unitId) >= UNIT_BY_ID[unitId].m
 function unitUnlocked(index) { return index === 0 || isComplete(CONTENT[index - 1].id); }
 function currentUnitIndex() { const found = CONTENT.findIndex((unit, index) => unitUnlocked(index) && !isComplete(unit.id)); return found < 0 ? CONTENT.length - 1 : found; }
 function activeMission(unit) { return Math.min(getProgress(unit.id), unit.missions.length - 1); }
-function modeMission(mission) { return state.mode === "pre" && mission.preVariant ? { ...mission, ...mission.preVariant, id: mission.id, nameHe: mission.nameHe, icon: mission.icon } : mission; }
+function modeMission(mission) { return mission; }
 
 function header(showMapButton = false) {
-  return `<header class="topbar"><div class="brand"><span class="brand-mark">🏴‍☠️</span><div><h1>Pirate Seas</h1><p>הרפתקת אנגלית</p></div></div><div class="purse"><span>🪙 ${state.coins}</span><span>🦪 ${state.pearls}</span>${showMapButton ? `<button class="secondary" onclick="showWorld()">↩ למפה</button>` : ""}</div></header>`;
+  return `<header class="topbar"><div class="brand"><span class="brand-mark">🏴‍☠️</span><div><h1>Pirate Seas</h1><p>הרפתקת אנגלית</p></div></div><div class="purse"><span class="reward-counter" tabindex="0" aria-describedby="coin-help"><span class="counter-value">🪙 ${state.coins}</span><span class="counter-tooltip" id="coin-help" role="tooltip"><b>מטבעות</b><small>מרוויחים 10 מטבעות בכל משימה ובונוס כשמסיימים מקום.</small></span></span><span class="reward-counter" tabindex="0" aria-describedby="shell-help"><span class="counter-value">🦪 ${state.pearls}</span><span class="counter-tooltip" id="shell-help" role="tooltip"><b>צדפים</b><small>מקבלים צדף אחד אחרי שמסיימים את כל המשימות במקום.</small></span></span>${showMapButton ? `<button class="secondary" onclick="showWorld()">↩ למפה</button>` : ""}</div></header>`;
 }
 
 function shell(content, options = {}) {
@@ -201,12 +205,13 @@ function shell(content, options = {}) {
 }
 
 function showWelcome() {
-  const route = CONTENT.map((unit, index) => `<div class="welcome-stop ${index === 0 ? "current" : ""}"><span>${unit.icon}</span><small>${esc(unit.nameHe)}</small></div>`).join("");
-  app.innerHTML = `<div class="app-shell">${header(false)}<section class="panel hero welcome-harbor"><div class="hero-art">⚓ 🦜 ⛵</div><p class="eyebrow">Welcome Harbor</p><h2>ההרפתקה מתחילה כאן</h2><p class="lead">לא צריך לדעת אנגלית או את האלף־בית. התוכי יראה, ישמיע ויעזור בכל צעד.</p><section class="welcome-map" aria-label="מפת המסע מנמל ברוכים הבאים עד אי השמות"><div class="map-title"><span>🗺️</span><div><b>מפת המסע</b><small>מהנמל אל אי השמות</small></div></div><div class="welcome-route">${route}</div></section><div class="mode-picker"><button class="mode" onclick="chooseMode('pre')"><span class="emoji">🎧</span><span class="mode-title">מסלול הקשבה</span><small>תמונות, צלילים והדגמות</small></button><button class="mode" onclick="chooseMode('reader')"><span class="emoji">📖</span><span class="mode-title">מסלול קריאה</span><small>צלילים, אותיות ומילים</small></button></div><p class="safe-note">אפשר לעצור בכל זמן. אין שעון ואין פסילה.</p></section><p class="footer-note">עברית מימין לשמאל · English stays left to right</p></div>`;
+  state.mode = "combined";
+  saveState();
+  showWorld();
 }
 
-function chooseMode(mode) { state.mode = mode; saveState(); showWorld(); }
-function resetGame() { localStorage.removeItem(STORAGE_KEY); localStorage.removeItem("pirate-seas-mvp"); state = freshState(); session = null; showWelcome(); }
+function chooseMode() { state.mode = "combined"; saveState(); showWorld(); }
+function resetGame() { localStorage.removeItem(STORAGE_KEY); localStorage.removeItem("pirate-seas-mvp"); state = freshState(); session = null; showWorld(); }
 
 function showWorld() {
   if (!state.mode) return showWelcome();
@@ -221,7 +226,7 @@ function showWorld() {
     return `<button class="map-location location-${index} ${done ? "done" : ""} ${current ? "current" : ""} ${unlocked ? "" : "locked"}" aria-label="${esc(unit.nameHe)}, ${status}" aria-describedby="location-tip-${index}" ${unlocked ? `onclick="showUnit('${unit.id}')"` : `aria-disabled="true"`}><span class="location-landmark"><span class="location-emoji" aria-hidden="true">${done ? "✅" : unit.icon}</span>${current ? `<span class="current-ship" aria-hidden="true">⛵</span>` : ""}</span><span class="location-plaque"><b>${esc(unit.nameHe)}</b><small class="english">${esc(unit.nameEn)}</small><small>${done ? "הושלם" : unlocked ? `<bdi>${progress} / ${unit.missions.length}</bdi> משימות` : "ייפתח בהמשך"}</small><span class="location-percent">${percent}%</span></span><span class="location-tooltip" id="location-tip-${index}" role="tooltip"><b>מה לומדים כאן?</b><span>${esc(unit.summaryHe)}</span><small><bdi>${unit.missions.length}</bdi> משימות · ${status}</small></span></button>`;
   }).join("");
   const foundationDone = CONTENT.filter(unit => unit.world === "foundations" && isComplete(unit.id)).length;
-  shell(`<section class="panel world-panel"><div class="world-heading"><div><p class="eyebrow">The Launching Cove</p><h2>מפת ההתחלה</h2><p>בנו את הסירה, האירו את המגדלור ואז הפליגו לאי השמות.</p></div><button class="secondary" onclick="showWelcome()">שינוי מסלול</button></div><div class="voyage-progress"><span>יסודות ${foundationDone} / 6</span><div class="meter"><span style="width:${foundationDone / 6 * 100}%"></span></div></div><div class="sea-map"><div class="map-compass" aria-hidden="true">✦<small>צ</small></div><span class="map-decoration cloud" aria-hidden="true">☁️</span><span class="map-decoration whale" aria-hidden="true">🐋</span><span class="map-decoration waves" aria-hidden="true">〰 〰 〰</span><svg class="sea-route-lines" viewBox="0 0 1000 520" preserveAspectRatio="none" aria-hidden="true"><path class="route-shadow" d="M875 120 C790 55 710 180 625 120 S460 60 375 120 S205 180 125 120 C55 205 55 315 125 390 C205 330 295 450 375 390 S545 330 625 390"/><path class="route-dashes" d="M875 120 C790 55 710 180 625 120 S460 60 375 120 S205 180 125 120 C55 205 55 315 125 390 C205 330 295 450 375 390 S545 330 625 390"/></svg><div class="world-route">${cards}</div></div><div class="map-legend"><span><i class="legend-dot current-dot"></i>המקום הנוכחי</span><span><i class="legend-dot done-dot"></i>הושלם</span><span><i class="legend-dot locked-dot"></i>נעול</span></div><div class="map-actions"><button class="secondary" onclick="resetGame()">התחלה חדשה</button><span>המשימה הבאה: ${esc(CONTENT[currentIndex].nameHe)}</span></div></section>`);
+  shell(`<section class="panel world-panel"><div class="world-heading"><div><p class="eyebrow">The Launching Cove</p><h2>מפת ההתחלה</h2><p>בנו את הסירה, האירו את המגדלור ואז הפליגו לאי השמות.</p></div><span class="combined-track">🎧 + 📖 מסלול משולב</span></div><div class="voyage-progress"><span>יסודות ${foundationDone} / 6</span><div class="meter"><span style="width:${foundationDone / 6 * 100}%"></span></div></div><div class="sea-map"><div class="map-compass" aria-hidden="true">✦<small>צ</small></div><span class="map-decoration cloud" aria-hidden="true">☁️</span><span class="map-decoration whale" aria-hidden="true">🐋</span><span class="map-decoration waves" aria-hidden="true">〰 〰 〰</span><svg class="sea-route-lines" viewBox="0 0 1000 520" preserveAspectRatio="none" aria-hidden="true"><path class="route-shadow" d="M875 120 C790 55 710 180 625 120 S460 60 375 120 S205 180 125 120 C55 205 55 315 125 390 C205 330 295 450 375 390 S545 330 625 390"/><path class="route-dashes" d="M875 120 C790 55 710 180 625 120 S460 60 375 120 S205 180 125 120 C55 205 55 315 125 390 C205 330 295 450 375 390 S545 330 625 390"/></svg><div class="world-route">${cards}</div></div><div class="map-legend"><span><i class="legend-dot current-dot"></i>המקום הנוכחי</span><span><i class="legend-dot done-dot"></i>הושלם</span><span><i class="legend-dot locked-dot"></i>נעול</span></div><div class="map-actions"><button class="secondary" onclick="resetGame()">התחלה חדשה</button><span>המשימה הבאה: ${esc(CONTENT[currentIndex].nameHe)}</span></div></section>`);
 }
 
 function showUnit(unitId) {
@@ -270,7 +275,7 @@ function renderMission() {
 }
 
 function optionCard(option, handler = "chooseAnswer") {
-  const text = state.mode === "reader" ? `<span class="english option-label">${esc(option.label || option.id)}</span>` : `<span class="listen-label">🔊</span>`;
+  const text = `<span class="english option-label">${esc(option.label || option.id)}</span>`;
   return `<button class="card" data-answer="${esc(option.id)}" onclick="${handler}(${jsArg(option.id)})"><span class="emoji">${option.emoji}</span>${text}</button>`;
 }
 
@@ -279,7 +284,7 @@ const RENDERERS = {
   checkpoint(mission) { renderChoice(mission, true); },
   collect(mission) {
     const remaining = mission.items.filter(item => !session.collected.includes(item.id));
-    const cards = mission.items.map(item => `<button class="card ${session.collected.includes(item.id) ? "collected" : ""}" onclick="collectItem(${jsArg(item.id)})"><span class="emoji">${item.emoji}</span>${state.mode === "reader" ? `<span class="english option-label">${esc(item.label)}</span>` : `<span>${session.collected.includes(item.id) ? "✓" : "🔊"}</span>`}</button>`).join("");
+    const cards = mission.items.map(item => `<button class="card ${session.collected.includes(item.id) ? "collected" : ""}" onclick="collectItem(${jsArg(item.id)})"><span class="emoji">${item.emoji}</span><span class="english option-label">${esc(item.label)}</span><small>${session.collected.includes(item.id) ? "✓" : "🔊 לחצו ושמעו"}</small></button>`).join("");
     activityFrame(mission, `<div class="prompt"><span class="emoji">${remaining.length ? "🦜" : "✨"}</span><span>${remaining.length ? `נשארו ${remaining.length}` : "שמענו את כולם!"}</span></div><div class="card-grid">${cards}</div><div class="status-row"><span class="status-chip english">${session.collected.length} / ${mission.items.length}</span></div>`);
   },
   sequence(mission) {
@@ -304,7 +309,7 @@ const RENDERERS = {
 function renderChoice(mission, checkpoint = false) {
   const round = mission.rounds[session.round];
   const options = shuffle(round.options);
-  const visiblePrompt = state.mode === "reader" ? `<span id="spoken" class="english">${esc(round.say)}</span>` : `<span>הקשיבו</span>`;
+  const visiblePrompt = `<span id="spoken" class="english">${esc(round.say)}</span>`;
   activityFrame(mission, `<div class="prompt ${checkpoint ? "checkpoint-prompt" : ""}"><span class="emoji">${checkpoint ? "💡" : "🦜"}</span>${visiblePrompt}<br><button class="secondary" onclick="speak(${jsArg(round.say)})">🔊 שמעו שוב</button></div><div class="card-grid">${options.map(option => optionCard(option)).join("")}</div><div class="status-row"><span class="status-chip english">${session.round + 1} / ${mission.rounds.length}</span>${checkpoint ? `<span class="status-chip">אורות <bdi>${session.round} / ${mission.rounds.length}</bdi></span>` : ""}</div>`);
   setTimeout(() => speak(round.say), 180);
 }
@@ -443,4 +448,4 @@ function validateContent() {
 }
 
 window.PirateSeas = { CONTENT, UNIT_BY_ID, freshState, validateContent, modeMission, startMission, showWorld, showUnit, resetGame, getState: () => state, setState: next => { state = next; } };
-state.mode ? showWorld() : showWelcome();
+showWorld();

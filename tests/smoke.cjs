@@ -34,15 +34,14 @@ assert.deepEqual(Array.from(api.validateContent()), [], 'Content contract must b
 assert.equal(api.CONTENT.filter(unit => unit.world === 'foundations').length, 6);
 assert.equal(api.CONTENT.filter(unit => unit.world === 'foundations').reduce((sum, unit) => sum + unit.missions.length, 0), 26);
 assert.equal(api.CONTENT.find(unit => unit.id === 'P01').missions.length, 7);
-assert.match(app.innerHTML, /Welcome Harbor/);
-assert.match(app.innerHTML, /לא צריך לדעת אנגלית/);
-assert.match(app.innerHTML, /מפת המסע/);
-assert.equal((app.innerHTML.match(/class="welcome-stop/g) || []).length, 7, 'Welcome map should show the full route');
-assert.match(app.innerHTML, /mode-title">מסלול הקשבה<\/span><small>/);
-assert.match(app.innerHTML, /mode-title">מסלול קריאה<\/span><small>/);
+assert.match(app.innerHTML, /מפת ההתחלה/, 'The game should open directly on the large map');
+assert.match(app.innerHTML, /מסלול משולב/);
+assert.doesNotMatch(app.innerHTML, /mode-title/, 'Separate track selection should be removed');
+assert.equal((app.innerHTML.match(/class="counter-tooltip"/g) || []).length, 2, 'Reward counters should explain coins and shells');
+assert.match(app.innerHTML, /מרוויחים 10 מטבעות/);
+assert.match(app.innerHTML, /מקבלים צדף אחד/);
 validateHandlers();
 
-run("chooseMode('reader')");
 assert.match(app.innerHTML, /מפת ההתחלה/);
 assert.match(app.innerHTML, /נמל ברוכים הבאים/);
 assert.match(app.innerHTML, /אי השמות/);
@@ -54,18 +53,15 @@ assert.match(app.innerHTML, /מה לומדים כאן\?/);
 assert.match(app.innerHTML, /map-location location-0[^>]*current/, 'Current location should be highlighted');
 assert.match(app.innerHTML, /map-location location-1[^>]*locked[^>]*aria-disabled="true"/, 'Future locations should remain locked and focusable');
 
-for (const mode of ['reader', 'pre']) {
-  run(`state.mode = '${mode}'`);
-  for (const unit of api.CONTENT) {
-    for (const base of unit.missions) {
-      const mission = api.modeMission(base);
-      for (const round of mission.rounds || []) assert(round.options.some(option => option.id === round.answer), `${mission.id}: answer missing in ${mode}`);
-      for (const turn of mission.turns || []) assert(turn.options.includes(turn.good), `${mission.id}: dialogue answer missing`);
-    }
+for (const unit of api.CONTENT) {
+  for (const base of unit.missions) {
+    const mission = api.modeMission(base);
+    for (const round of mission.rounds || []) assert(round.options.some(option => option.id === round.answer), `${mission.id}: answer missing in combined track`);
+    for (const turn of mission.turns || []) assert(turn.options.includes(turn.good), `${mission.id}: dialogue answer missing`);
   }
 }
 
-run("state = freshState(); state.mode = 'reader'; showWorld()");
+run("state = freshState(); showWorld()");
 
 function finishAuthoredMission(unit, mission, index) {
   run(`startMission(${JSON.stringify(unit.id)}, ${index})`);
@@ -127,25 +123,26 @@ vm.runInContext(readFileSync('app.js', 'utf8'), vm.createContext({
   setTimeout: fn => { fn(); return 1; }
 }));
 const repairedState = migrationWindow.PirateSeas.getState();
-assert.equal(repairedState.version, 3);
+assert.equal(repairedState.version, 4);
+assert.equal(repairedState.mode, 'combined');
 assert.equal(repairedState.progress.F00 || 0, 0, 'Auto-completed foundations should reset to mission 1');
 assert.equal(repairedState.progress.P01, 2, 'Existing Name Island progress should be preserved');
 assert.equal(repairedState.coins, 17, 'Existing rewards should be preserved');
 
 // Replaying mission 1 of a completed location stays inside that location.
-run("state = freshState(); state.mode = 'reader'; state.progress.F00 = 4; startMission('F00', 0); chooseAnswer('hello')");
+run("state = freshState(); state.progress.F00 = 4; startMission('F00', 0); chooseAnswer('hello')");
 assert.match(app.innerHTML, /למשימה הבאה במקום הזה/);
 assert.match(app.innerHTML, /startMission\('F00',1\)/);
 assert.doesNotMatch(app.innerHTML, /showUnit\('F01'\)/);
 
-run("state = freshState(); state.mode = 'reader'; state.progress.P01 = 4; startMission('P01', 4)");
+run("state = freshState(); state.progress.P01 = 4; startMission('P01', 4)");
 run("selectToken('happy', 2); selectToken('I', 0); selectToken('am', 1); checkSequence()");
 assert.match(app.innerHTML, /I am happy/);
 assert.match(app.innerHTML, /selectToken\(&quot;I&quot;,0\)/);
 
-run("state = freshState(); state.mode = 'pre'; state.progress.F01 = 3; startMission('F01', 3)");
-assert.match(app.innerHTML, /שמעו את המילה ובחרו את התמונה/);
-assert.doesNotMatch(app.innerHTML, /selectToken/);
+run("state = freshState(); state.progress.F01 = 3; startMission('F01', 3)");
+assert.match(app.innerHTML, /הניחו את הצלילים משמאל לימין/);
+assert.match(app.innerHTML, /selectToken/);
 validateHandlers();
 
-console.log(`Passed: ${api.CONTENT.length} units, 33 missions, 26 foundation missions, both learner paths, persistence, retries, and inline handlers.`);
+console.log(`Passed: ${api.CONTENT.length} units, 33 missions, 26 foundation missions, combined learning track, persistence, retries, and inline handlers.`);

@@ -21,7 +21,12 @@ button { font: inherit; cursor: pointer; }
 .brand h1 { font-size: clamp(1.25rem, 3vw, 2rem); margin: 0; }
 .brand p { margin: 3px 0 0; opacity: .9; font-size: .92rem; }
 .purse { display: flex; gap: 8px; direction: rtl; }
-.purse span { background: rgba(8,43,76,.76); padding: 8px 12px; border: 2px solid rgba(255,255,255,.35); border-radius: 999px; white-space: nowrap; }
+.reward-counter { position:relative; display:inline-flex; border-radius:999px; outline:none; }
+.counter-value { display:block; padding:8px 12px; border:2px solid rgba(255,255,255,.35); border-radius:999px; background:rgba(8,43,76,.76); white-space:nowrap; }
+.counter-tooltip { position:absolute; z-index:20; top:calc(100% + 11px); right:50%; width:220px; display:flex; flex-direction:column; gap:4px; padding:11px 13px; border:2px solid #f0bd4e; border-radius:13px; background:#fffdf1; color:var(--ink); box-shadow:0 6px 0 rgba(5,49,76,.22); text-align:right; line-height:1.35; opacity:0; visibility:hidden; pointer-events:none; transform:translateX(50%) translateY(-5px); transition:opacity .15s ease, transform .15s ease, visibility .15s; }
+.counter-tooltip::before { content:""; position:absolute; right:50%; top:-7px; width:11px; height:11px; border-top:2px solid #f0bd4e; border-right:2px solid #f0bd4e; background:#fffdf1; transform:translateX(50%) rotate(-45deg); }
+.counter-tooltip b { color:var(--ocean); }.counter-tooltip small { font-size:.78rem; font-weight:700; }
+.reward-counter:hover .counter-tooltip, .reward-counter:focus-visible .counter-tooltip { opacity:1; visibility:visible; transform:translateX(50%) translateY(0); }.reward-counter:focus-visible .counter-value { outline:3px solid #fff4a3; outline-offset:2px; }
 .panel { background: rgba(255,253,248,.97); border: 4px solid #fff; border-radius: 28px; box-shadow: 0 13px 0 rgba(4,46,78,.25); padding: clamp(20px, 4vw, 42px); }
 .hero { text-align: center; background: linear-gradient(130deg, #fff9df, #d7f5ff); }
 .hero-art { font-size: clamp(4.5rem, 12vw, 8rem); letter-spacing: .04em; margin-bottom: 5px; }
@@ -69,6 +74,7 @@ h2 { margin: 0 0 12px; font-size: clamp(1.5rem, 4vw, 2.5rem); }
 .world-panel { padding-bottom: 30px; }
 .world-heading, .map-actions, .completion-actions { display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap; }
 .world-heading p { margin: 5px 0; line-height: 1.5; }
+.combined-track { padding:10px 15px; border:2px solid #9bcfdd; border-radius:999px; background:#e8f7fa; color:var(--navy); font-weight:900; white-space:nowrap; }
 .voyage-progress { margin: 23px 0; font-weight: 800; }
 .voyage-progress > span { display:block; margin-bottom:8px; }
 .sea-map { position:relative; min-height:520px; overflow:hidden; border:4px solid #77bfd4; border-radius:28px; padding:18px; background:radial-gradient(circle at 18% 20%, rgba(255,255,255,.32) 0 2%, transparent 2.4%), radial-gradient(circle at 72% 62%, rgba(255,255,255,.2) 0 1.4%, transparent 1.8%), linear-gradient(155deg, #66c6df, #1684ae 48%, #087095); box-shadow:inset 0 0 0 4px rgba(255,255,255,.25), inset 0 -24px 60px rgba(0,63,102,.16); }
