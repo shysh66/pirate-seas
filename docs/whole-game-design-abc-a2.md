@@ -1,8 +1,8 @@
 # Pirate Seas: complete learning journey, ABC → A1 → A2
 
-Design proposal · 12 September 2026 · Detailed through A1; A2 is a roadmap.
+Design proposal · revised 13 September 2026 · Detailed through A1; A2 is a roadmap.
 
-This document expands and revises the existing curriculum, Island 3/4 specifications, and technical architecture. It is a design specification, not a claim that these features already exist. The deployed app is a small Name Island browser prototype. The new beginner sequence, additional islands, phonics progression, mastery system, and assessments below still require implementation and content production.
+This document expands and revises the existing curriculum, Island 3/4 specifications, and technical architecture. It remains a design specification, not a claim that the entire journey exists. The deployed browser prototype now includes Starting Harbor, five foundation units, and a reusable seven-mission Name Island. Later islands, production recordings/artwork, a true retention model, and the full assessment system still require implementation and content production.
 
 ## 1. Product decision and destination
 
@@ -52,6 +52,14 @@ There is no combat, punishment for errors, lost life, public ranking, or compuls
 6. Celebration: what the child did, cosmetic rewards, and a natural stopping point.
 7. Parent zone: separate evidence for listening, speaking, reading, writing, and retained knowledge.
 
+### Early-learner interaction rule: one idea, several senses
+
+For Starting Harbor and the first foundation encounters, each round teaches **one concrete idea** through coordinated channels: the child sees it, touches or moves it, hears the same English meaning, and sees an immediate result that still represents that idea. Art, speech, prompt, choices, and outcome must all point to the same learning target. Decorative objects must not look like answers, and unrelated objects must not be used as distractors before the target concept is secure.
+
+For example, a flag round shows a flag on a mast, offers different **flag designs** rather than unrelated symbols or objects, says “flag” when a design is touched, and places the chosen design on the same mast. The completed scene remains visibly a flag so the child can connect the English word, the image, the action, and the result.
+
+Visible Hebrew is a fallback cue, not the primary explanation. F00 instructions have one action, preferably one short line, and a hard maximum of 30 visible characters. Animation and audio demonstrate the action. F01–F05 use the same one-action principle and must be tested with young children for reading load before content expands.
+
 ### Learner paths
 
 | Feature | Pre-reader / listening path | Reader / literacy path |
@@ -85,9 +93,9 @@ The proposed sound order is selected to allow useful short words early. A litera
 1. Parrot waves; tap the waving hand; hear “Hello!” Optional cheerful repetition.
 2. Audio check with an obvious picture-action pair; replay button demonstrated.
 3. Follow modeled go/stop commands to move a boat. No timing test.
-4. Choose a boat flag and say goodbye to the harbor guide.
+4. See a large blank flag on a mast. Touch one of four clearly recognizable flag designs to hear “flag” plus its design, place that same design on the mast, hear “This is my flag,” and say goodbye to the harbor guide. No unrelated object is presented as a flag choice.
 
-First-choice failure triggers a hand animation and a new attempt. Completion evidence is successful interaction with help available; no alphabet knowledge is required. Parent may enter a nickname, but the child may use a fictional captain name.
+First-choice failure triggers a hand animation and a new attempt. Completion evidence is successful interaction with help available; no alphabet knowledge is required. Parent may enter a nickname, but the child may use a fictional captain name. Every F00 Hebrew instruction must pass the 30-character content check, and a child must be able to act from the modeled scene without listening to a long Hebrew explanation.
 
 ### F01 — Lantern Letters · 4 missions
 
@@ -478,7 +486,7 @@ Placement is parent-accessible and optional: a 5–8 minute branching voyage sam
 
 ## 10. Difficulty, feedback, and transfer
 
-After repeated errors, reduce one difficulty dimension at a time: fewer distractors → clearer picture distinctions → slower model → demonstration. Then retry later with a fresh prompt. Do not simultaneously add vocabulary, a new tense, an unfamiliar mechanic, and more answer choices.
+After repeated errors, reduce one difficulty dimension at a time: fewer distractors → clearer picture distinctions → slower model → demonstration. Then retry later with a fresh prompt. Do not simultaneously add vocabulary, a new tense, an unfamiliar mechanic, and more answer choices. For foundation learners, do not manufacture difficulty with semantically unrelated distractors: vary examples *within* the concept after the concept is recognizable.
 
 For missing copula: show the bridge gap, model the complete phrase, invite a repeat, and supply a fresh sentence. For adjective order: paint pours only onto the noun ahead of the adjective. For plurals: quantity and the noun ending agree visually, with exception rules. For did + verb: the question helper carries past marking so the main verb uses its base form.
 
@@ -502,9 +510,9 @@ On first launch with a new profile, resolve the world manifest to Starting Harbo
 
 ### Content contracts
 
-Each island pack needs: versioned identity; prerequisites; can-do objectives; vocabulary/chunk IDs; oral introductions; scene objects; level rounds; permissible answers; distractors; mode overrides; phonics prerequisites; recording references; dialogue graph; review compatibility; shield evidence; rewards; and asset manifest.
+Each island pack needs: versioned identity; prerequisites; can-do objectives; vocabulary/chunk IDs; oral introductions; scene objects; level rounds; permissible answers; distractors; mode overrides; phonics prerequisites; recording references; dialogue graph; review compatibility; shield evidence; rewards; asset manifest; and, for each early-learner round, a declared focal concept with its visual, audio, action, and outcome representations.
 
-Every assessed word/phrase maps to its teaching event. Every response records whether it was recognition, scaffolded construction, or independent production. A content linter rejects missing assets, empty answer sets, absent correct choices, unresolved variables, unreachable dialogue ends, impossible shields, prerequisite cycles, and spelling tasks above the declared phonics level.
+Every assessed word/phrase maps to its teaching event. Every response records whether it was recognition, scaffolded construction, or independent production. A content linter rejects missing assets, empty answer sets, absent correct choices, unresolved variables, unreachable dialogue ends, impossible shields, prerequisite cycles, spelling tasks above the declared phonics level, F00 instructions over 30 visible characters, and early answer sets that mix the focal concept with unrelated object categories.
 
 Reusable engines stay independent from React. The long-term target remains Expo/React Native with a web export, offline content, transactional persistence, and an activity registry. The current single-file browser implementation is a prototype and needs extraction into these engines before dozens of islands are authored.
 
@@ -537,7 +545,7 @@ Persist after each meaningful checkpoint. Completion, memory updates, and reward
 
 | Milestone | Deliverable | Exit criterion |
 |---|---|---|
-| M0 Correct entry and foundations | Profile flow, world manifest, Starting Harbor, F01–F05 | A fresh child can start without reading and reach a meaningful first success |
+| M0 Correct entry and foundations | Profile flow, world manifest, Starting Harbor, F01–F05 | A fresh child can start without reading and reach a meaningful first success; F00 passes the short-instruction and one-concept/many-senses checks |
 | M1 Reliable reusable slice | Refactored Name Island, actual audio, SRS, evidence, transactional rewards | All missions completable in both modes; saved progress survives restart; no false mastery claims |
 | M2 Pre-A1 grammar/template proof | Split Rainbow/Counting, Toy, Animal islands | Paint, plural, quantity, placement, and exception handling work from content |
 | M3 Complete Calm Sea | P01–P12, literacy thread, P12 checkpoint | Full Pre-A1 path, content lint, controlled reader vocabulary, delayed review |
@@ -567,8 +575,9 @@ Priority before mass content authoring: a qualified early-literacy/English teach
 ## 15. Authoring checklist for the next island
 
 - Specify one communicative purpose and a final task that needs it.
+- For each beginner round, name one focal concept and align its picture, touch action, audio, choices, and visible outcome; remove unrelated answer-like decoration.
 - Declare all new words, chunks, grammar contrasts, sound patterns, and prerequisite concepts.
-- Author the seven missions and both modes, with short rounds and demonstrated instructions.
+- Author the seven missions and both modes, with short rounds and demonstrated one-action instructions; enforce the F00 30-character maximum and test later foundation copy for equivalent reading load.
 - Script every scored prompt, acceptable answer, correction, and alternate boss route.
 - Ensure the answer appears among choices and the child can hear options before confirming.
 - Include at least two transfer contexts and delayed-review items.
