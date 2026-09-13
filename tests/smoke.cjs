@@ -35,6 +35,9 @@ assert.equal(api.CONTENT.filter(unit => unit.world === 'foundations').length, 6)
 assert.equal(api.CONTENT.filter(unit => unit.world === 'foundations').reduce((sum, unit) => sum + unit.missions.length, 0), 26);
 assert.equal(api.CONTENT.find(unit => unit.id === 'P01').missions.length, 7);
 assert(new Set(api.CONTENT.flatMap(unit => unit.missions.map(mission => mission.kind))).size >= 10, 'The journey should contain at least ten distinct activity types');
+for (const mission of api.CONTENT.find(unit => unit.id === 'F00').missions) {
+  assert([...mission.instructionHe].length <= 30, `${mission.id}: Starting Harbor instruction is too long for young children`);
+}
 assert.match(app.innerHTML, /מפת ההתחלה/, 'The game should open directly on the large map');
 assert.match(app.innerHTML, /מסלול משולב/);
 assert.doesNotMatch(app.innerHTML, /mode-title/, 'Separate track selection should be removed');
@@ -89,7 +92,7 @@ function finishAuthoredMission(unit, mission, index) {
     active.target.forEach((token, tokenIndex) => run(`selectToken(${JSON.stringify(token)}, ${tokenIndex})`));
     run('checkSequence()');
   } else if (active.kind === 'flag') {
-    run(`chooseFlag(${JSON.stringify(active.flags[0])}); finishFlag()`);
+    run(`chooseFlag(${JSON.stringify(active.flags[0].id)}); finishFlag()`);
   } else if (active.kind === 'case') {
     for (const pair of active.pairs) run(`chooseCase(${JSON.stringify(pair[1])})`);
   } else if (active.kind === 'swap') {
@@ -169,6 +172,15 @@ validateHandlers();
 run("state = freshState(); state.progress.F00 = 2; startMission('F00', 2)");
 assert.match(app.innerHTML, /data-kind="sail"/);
 assert.match(app.innerHTML, /class="helm-controls"/);
+
+run("state = freshState(); state.progress.F00 = 3; startMission('F00', 3)");
+assert.equal((app.innerHTML.match(/class="flag-choice/g) || []).length, 4, 'Flag mission should offer four actual flag designs');
+assert.match(app.innerHTML, /class="flag-preview empty"/);
+assert.match(app.innerHTML, />flag</);
+run("chooseFlag('star')");
+assert.match(app.innerHTML, /class="flag-preview ready"/);
+assert.match(app.innerHTML, /My flag!/);
+assert.match(app.innerHTML, /flag-choice selected/);
 
 run("state = freshState(); state.progress.F03 = 0; startMission('F03', 0)");
 assert.match(app.innerHTML, /data-kind="sort"/);
