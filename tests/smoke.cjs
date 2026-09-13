@@ -46,7 +46,11 @@ run("chooseMode('reader')");
 assert.match(app.innerHTML, /מפת ההתחלה/);
 assert.match(app.innerHTML, /נמל ברוכים הבאים/);
 assert.match(app.innerHTML, /אי השמות/);
-assert.match(app.innerHTML, /unit-card[^>]*locked[^>]*disabled/);
+assert.match(app.innerHTML, /class="sea-map"/, 'Main screen should render a visual sea map');
+assert.match(app.innerHTML, /class="sea-route-lines"/, 'Visual map should connect locations with a route');
+assert.equal((app.innerHTML.match(/class="map-location/g) || []).length, 7, 'Visual map should show every location');
+assert.match(app.innerHTML, /map-location location-0[^>]*current/, 'Current location should be highlighted');
+assert.match(app.innerHTML, /map-location location-1[^>]*locked[^>]*disabled/, 'Future locations should remain locked');
 
 for (const mode of ['reader', 'pre']) {
   run(`state.mode = '${mode}'`);
