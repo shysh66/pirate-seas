@@ -31,6 +31,7 @@ vm.runInContext(readFileSync('app.js', 'utf8'), context);
 const run = code => vm.runInContext(code, context);
 const api = windowObject.PirateSeas;
 const audioManifest = JSON.parse(readFileSync('audio/manifest.json', 'utf8'));
+const styles = readFileSync('styles.css', 'utf8');
 
 function decodeHandler(value) {
   return value.replaceAll('&quot;', '"').replaceAll('&lt;', '<').replaceAll('&gt;', '>').replaceAll('&amp;', '&');
@@ -102,12 +103,28 @@ for (const unit of api.CONTENT) {
   for (const base of unit.missions) {
     const mission = api.modeMission(base);
     if (['choice', 'checkpoint', 'sail'].includes(mission.kind)) {
-      for (const round of mission.rounds || []) assert(round.options.some(option => option.id === round.answer), `${mission.id}: answer missing in combined track`);
+      for (const round of mission.rounds || []) {
+        assert(round.options.some(option => option.id === round.answer), `${mission.id}: answer missing in combined track`);
+        const optionSpeech = round.options.map(option => option.audio || option.label || option.id);
+        assert.equal(new Set(optionSpeech).size, optionSpeech.length, `${mission.id}: visibly different options must not share the same spoken response`);
+      }
     }
-    if (mission.kind === 'swap') for (const round of mission.rounds) assert(round.choices.includes(round.answer), `${mission.id}: replacement letter missing`);
-    if (mission.kind === 'sort') for (const item of mission.items) assert(mission.buckets.some(bucket => bucket.id === item.bucket), `${mission.id}: sorting bucket missing`);
+    if (mission.kind === 'swap') for (const round of mission.rounds) {
+      assert(round.choices.includes(round.answer), `${mission.id}: replacement letter missing`);
+      assert.equal(new Set(round.choices).size, round.choices.length, `${mission.id}: letter controls must have distinct sounds`);
+    }
+    if (mission.kind === 'sort') {
+      for (const item of mission.items) assert(mission.buckets.some(bucket => bucket.id === item.bucket), `${mission.id}: sorting bucket missing`);
+      const bucketSpeech = mission.buckets.map(bucket => bucket.audio || bucket.label || bucket.id);
+      assert.equal(new Set(bucketSpeech).size, bucketSpeech.length, `${mission.id}: sorting buckets must have distinct sounds`);
+    }
     if (mission.kind === 'memory') assert(mission.pairs.length >= 3, `${mission.id}: memory game needs several pairs`);
-    for (const turn of mission.turns || []) assert(turn.options.includes(turn.good), `${mission.id}: dialogue answer missing`);
+    if (mission.kind === 'case') assert.equal(new Set(mission.pairs.map(pair => pair[1])).size, mission.pairs.length, `${mission.id}: case controls must have distinct sounds`);
+    if (mission.kind === 'flag') assert.equal(new Set(mission.flags.map(flag => flag.audio)).size, mission.flags.length, `${mission.id}: flag choices must have distinct sounds`);
+    for (const turn of mission.turns || []) {
+      assert(turn.options.includes(turn.good), `${mission.id}: dialogue answer missing`);
+      assert.equal(new Set(turn.options).size, turn.options.length, `${mission.id}: dialogue controls must have distinct sounds`);
+    }
   }
 }
 
@@ -237,6 +254,25 @@ validateHandlers();
 run("state = freshState(); state.progress.F00 = 2; startMission('F00', 2)");
 assert.match(app.innerHTML, /data-kind="sail"/);
 assert.match(app.innerHTML, /class="helm-controls"/);
+run("chooseSail('stop')");
+assert.equal(spoken.at(-1).text, 'Stop', 'STOP must speak Stop even when the prompt asks for Go');
+assert.equal(run('session.round'), 0);
+run('session.round = 1');
+run("chooseSail('go')");
+assert.equal(spoken.at(-1).text, 'Go', 'GO must speak Go even when the prompt asks for Stop');
+assert.equal(run('session.round'), 1);
+run('session.round = 2');
+run("chooseSail('stop')");
+assert.equal(spoken.at(-1).text, 'Stop', 'The third sail round must also speak the selected control');
+
+run("state = freshState(); state.progress.F01 = 2; startMission('F01', 2)");
+assert.match(app.innerHTML, /class="prompt letter-prompt/);
+assert.match(app.innerHTML, /איזו תמונה מתחילה בצליל הזה/);
+assert.match(app.innerHTML, /class="english target-letter">s</);
+assert.match(app.innerHTML, /aria-label="השמעת הצליל שוב"[^>]*>🔊<\/button>/);
+assert.doesNotMatch(app.innerHTML, /🔊 שמעו שוב/, 'Learners past Starting Harbor only need the familiar replay icon');
+assert.match(styles, /\.prompt \{[^}]*text-align:center/);
+assert.match(styles, /\.letter-prompt \{[^}]*align-items:center/);
 
 run("state = freshState(); state.progress.F00 = 3; startMission('F00', 3)");
 assert.equal((app.innerHTML.match(/class="flag-choice/g) || []).length, 4, 'Flag mission should offer four actual flag designs');
@@ -250,10 +286,18 @@ assert.match(app.innerHTML, /flag-choice selected/);
 run("state = freshState(); state.progress.F03 = 0; startMission('F03', 0)");
 assert.match(app.innerHTML, /data-kind="sort"/);
 assert.match(app.innerHTML, /class="bucket-grid"/);
+run("selectSortItem('pen'); chooseSortBucket('u')");
+assert.equal(spoken.at(-1).text, 'u, umbrella', 'A tapped sorting bucket should speak its own label');
 
 run("state = freshState(); state.progress.F03 = 3; startMission('F03', 3)");
 assert.match(app.innerHTML, /data-kind="swap"/);
 assert.match(app.innerHTML, /class="word-machine english"/);
+run("chooseSwap('e')");
+assert.equal(spoken.at(-1).text, 'e', 'A wrong letter tile should still speak the selected letter');
+
+run("state = freshState(); state.progress.F04 = 3; startMission('F04', 3)");
+run("chooseCase('M')");
+assert.equal(spoken.at(-1).text, 'M', 'A wrong case option should speak the selected letter');
 
 run("state = freshState(); state.progress.P01 = 1; startMission('P01', 1)");
 assert.match(app.innerHTML, /data-kind="memory"/);
@@ -276,6 +320,8 @@ assert.match(app.innerHTML, /two red shells/, 'Rainbow Reef should combine visib
 assert.match(app.innerHTML, /🔴🔴/);
 run("state = freshState(); state.progress.P02 = 6; startMission('P02', 6)");
 assert.match(app.innerHTML, /Hear Rainbow Octopus/, 'Rainbow Reef dialogue should use its own character');
+run("chooseDialogue('Goodbye!')");
+assert.equal(spoken.at(-1).text, 'Goodbye!', 'A dialogue option should speak its own text, including when it is not the answer');
 
 run("state = freshState(); state.progress.P03 = 5; startMission('P03', 5)");
 assert.match(app.innerHTML, /purple circle/, 'Counting Cove should reuse colors while sorting shapes');

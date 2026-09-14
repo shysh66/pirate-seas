@@ -1,7 +1,7 @@
 /* Pirate Seas — dependency-free curriculum prototype. */
 const STORAGE_KEY = "pirate-seas-v2";
 const STATE_VERSION = 5;
-const CONTENT_VERSION = 2;
+const CONTENT_VERSION = 3;
 const DAY_MS = 24 * 60 * 60 * 1000;
 const REVIEW_INTERVAL_DAYS = [0, 1, 3, 7, 14, 30];
 const MAX_EVIDENCE_EVENTS = 800;
@@ -41,7 +41,7 @@ const CONTENT = [
         { say: "s", answer: "sun", options: [O("sun", "☀️", "sun"), O("pig", "🐷", "pig"), O("nose", "👃", "nose")] },
         { say: "p", answer: "pig", options: [O("tiger", "🐯", "tiger"), O("pig", "🐷", "pig"), O("apple", "🍎", "apple")] },
         { say: "n", answer: "nose", options: [O("nose", "👃", "nose"), O("sun", "☀️", "sun"), O("tiger", "🐯", "tiger")] }
-      ], readerPrompt: "איזו תמונה מתחילה באות המוצגת?" },
+      ], readerPrompt: "איזו תמונה מתחילה בצליל הזה?" },
       { id: "F01-M04", icon: "🧩", nameHe: "מחברים צלילים", kind: "sequence", instructionHe: "הניחו את הצלילים משמאל לימין ובנו sat.", say: "s, a, t, sat", target: ["s", "a", "t"], picture: "🧍", result: "sat",
         preVariant: { kind: "choice", instructionHe: "שמעו את המילה ובחרו את התמונה.", rounds: [{ say: "sat", answer: "sat", options: [O("sat", "🧍", "sat"), O("pin", "📌", "pin"), O("tap", "👆", "tap")] }] } }
     ]
@@ -56,7 +56,7 @@ const CONTENT = [
         { say: "m", answer: "map", options: [O("map", "🗺️", "map"), O("dog", "🐶", "dog"), O("cat", "🐱", "cat")] },
         { say: "d", answer: "dog", options: [O("map", "🗺️", "map"), O("dog", "🐶", "dog"), O("key", "🔑", "key")] },
         { say: "c, cat", answer: "cat", options: [O("cat", "🐱", "cat"), O("gift", "🎁", "gift"), O("dog", "🐶", "dog")] }
-      ] },
+      ], readerPrompt: "איזו תמונה מתחילה בצליל הזה?" },
       { id: "F02-M04", icon: "⚙️", nameHe: "מכונת המילים", kind: "sequence", instructionHe: "הכניסו את הצלילים לפי הסדר ובנו dog.", say: "d, o, g, dog", target: ["d", "o", "g"], picture: "🐶", result: "dog",
         preVariant: { kind: "choice", instructionHe: "איזו תמונה היא dog?", rounds: [{ say: "dog", answer: "dog", options: [O("cat", "🐱", "cat"), O("dog", "🐶", "dog"), O("map", "🗺️", "map")] }] } }
     ]
@@ -66,7 +66,7 @@ const CONTENT = [
     summaryHe: "מבדילים בין תנועות קצרות ומשנים צליל אחד במילה.", reward: 25,
     missions: [
       { id: "F03-M01", icon: "🧺", nameHe: "e או u", kind: "sort", instructionHe: "בחרו תמונה ואז הניחו אותה בסל של הצליל e או u.", buckets: [
-        { id: "e", label: "e", emoji: "🥚" }, { id: "u", label: "u", emoji: "☂️" }
+        { id: "e", label: "e", emoji: "🥚", audio: "e, egg" }, { id: "u", label: "u", emoji: "☂️", audio: "u, umbrella" }
       ], items: [
         { id: "pen", emoji: "🖊️", label: "pen", audio: "pen", bucket: "e" },
         { id: "bed", emoji: "🛏️", label: "bed", audio: "bed", bucket: "e" },
@@ -211,7 +211,7 @@ const CONTENT = [
       ] },
       { id: "P03-M05", icon: "🎂", nameHe: "אומרים גיל", kind: "sequence", instructionHe: "בנו: I am seven", say: "I am seven", target: ["I", "am", "seven"], picture: "🎂", result: "I am seven" },
       { id: "P03-M06", icon: "🧺", nameHe: "ממיינים צורות", kind: "sort", instructionHe: "בחרו צורה ושימו בסל.", buckets: [
-        { id: "circle", label: "circle", emoji: "●" }, { id: "square", label: "square", emoji: "■" }, { id: "triangle", label: "triangle", emoji: "▲" }
+        { id: "circle", label: "circle", emoji: "●", audio: "circle" }, { id: "square", label: "square", emoji: "■", audio: "square" }, { id: "triangle", label: "triangle", emoji: "▲", audio: "triangle" }
       ], items: [
         { id: "purple-circle", emoji: "🟣 ●", label: "purple circle", audio: "purple circle", bucket: "circle" },
         { id: "brown-circle", emoji: "🟤 ●", label: "brown circle", audio: "brown circle", bucket: "circle" },
@@ -676,10 +676,14 @@ const RENDERERS = {
 function renderChoice(mission, checkpoint = false) {
   const round = mission.rounds[session.round];
   const options = shuffle(round.options);
-  const visiblePrompt = `<span id="spoken" class="english">${esc(round.say)}</span>`;
+  const targetSymbol = round.say.split(",")[0].trim();
+  const visiblePrompt = mission.readerPrompt
+    ? `<small class="letter-question">${esc(mission.readerPrompt)}</small><span id="spoken" class="english target-letter">${esc(targetSymbol)}</span>`
+    : `<span class="emoji" aria-hidden="true">${checkpoint ? "💡" : "🦜"}</span><span id="spoken" class="english">${esc(round.say)}</span>`;
+  const replayLabel = session.unitId === "F00" ? "🔊 שמעו שוב" : "🔊";
   const modelsReady = !mission.models?.length || mission.models.every(model => session.modelsHeard.includes(model.id));
   const modelStrip = mission.models?.length ? `<div class="model-strip"><b>קודם מכירים את הפעולות</b><div>${mission.models.map(model => `<button class="${session.modelsHeard.includes(model.id) ? "heard" : ""}" onclick="previewModel(${jsArg(model.id)})"><span>${model.emoji}</span><small class="english">${esc(model.label)}</small><i>🔊</i></button>`).join("")}</div></div>` : "";
-  activityFrame(mission, `${modelStrip}<div class="prompt ${checkpoint ? "checkpoint-prompt" : ""}"><span class="emoji">${checkpoint ? "💡" : "🦜"}</span>${visiblePrompt}<br><button class="secondary" onclick="replaySpeech(${jsArg(round.say)})">🔊 שמעו שוב</button></div><div class="card-grid">${options.map(option => optionCard(option, "chooseAnswer", !modelsReady)).join("")}</div>${modelsReady ? "" : `<p class="model-hint">געו בשתי הפעולות כדי לפתוח את הבחירה.</p>`}<div class="status-row"><span class="status-chip english">${session.round + 1} / ${mission.rounds.length}</span>${checkpoint ? `<span class="status-chip">אורות <bdi>${session.round} / ${mission.rounds.length}</bdi></span>` : ""}</div>`);
+  activityFrame(mission, `${modelStrip}<div class="prompt ${mission.readerPrompt ? "letter-prompt" : ""} ${checkpoint ? "checkpoint-prompt" : ""}">${visiblePrompt}<br><button class="secondary replay-icon" aria-label="השמעת הצליל שוב" title="השמעת הצליל שוב" onclick="replaySpeech(${jsArg(round.say)})">${replayLabel}</button></div><div class="card-grid">${options.map(option => optionCard(option, "chooseAnswer", !modelsReady)).join("")}</div>${modelsReady ? "" : `<p class="model-hint">געו בשתי הפעולות כדי לפתוח את הבחירה.</p>`}<div class="status-row"><span class="status-chip english">${session.round + 1} / ${mission.rounds.length}</span>${checkpoint ? `<span class="status-chip">אורות <bdi>${session.round} / ${mission.rounds.length}</bdi></span>` : ""}</div>`);
   if (modelsReady) setTimeout(() => speak(round.say), 180);
 }
 
@@ -773,15 +777,16 @@ function chooseAnswer(choice) {
 function chooseSail(action) {
   const mission = modeMission(UNIT_BY_ID[session.unitId].missions[session.missionIndex]);
   const round = mission.rounds[session.round];
+  const selected = round.options.find(option => option.id === action);
   if (action !== round.answer) {
     recordMistake(round.answer, { skill: "receptive", activity: "sail", responseType: "action" });
     feedback(action === "go" ? "אופס, הקפטן ביקש לעצור ולהטיל עוגן." : "אופס, הקפטן ביקש להפליג קדימה.");
-    speak(round.say);
+    speak(selected?.audio || selected?.label || action, { supportive: true });
     return;
   }
   recordSuccess(round.answer, { skill: "receptive", activity: "sail", responseType: "action" });
   feedback(action === "go" ? "הרוח במפרשים!" : "העוגן ירד בזמן!", true);
-  speak(action === "go" ? "Go!" : "Stop!");
+  speak(selected?.audio || selected?.label || action);
   session.round++;
   if (session.round >= mission.rounds.length) return setTimeout(completeMission, 600);
   setTimeout(renderMission, 500);
@@ -800,16 +805,18 @@ function selectSortItem(itemId) {
 function chooseSortBucket(bucketId) {
   const mission = modeMission(UNIT_BY_ID[session.unitId].missions[session.missionIndex]);
   const item = mission.items.find(candidate => candidate.id === session.activeItem);
+  const bucket = mission.buckets.find(candidate => candidate.id === bucketId);
   if (!item) return feedback("קודם בחרו תמונה מהמגש.");
   if (item.bucket !== bucketId) {
     recordMistake(item.id, { skill: "receptive", activity: "sort", responseType: "classification" });
-    feedback("הקשיבו שוב ונסו את הסל השני.");
-    speak(item.audio || item.label);
+    feedback("שמעתם את הסל. נסו סל אחר.");
+    speak(bucket?.audio || bucket?.label || bucketId, { supportive: true });
     return;
   }
   recordSuccess(item.id, { skill: "receptive", activity: "sort", responseType: "classification" });
   session.sorted.push(item.id);
   session.activeItem = null;
+  speak(bucket?.audio || bucket?.label || bucketId);
   renderMission();
   feedback("בדיוק! התמונה נכנסה לסל הנכון.", true);
   if (session.sorted.length >= mission.items.length) setTimeout(completeMission, 650);
@@ -821,7 +828,7 @@ function chooseSwap(letter) {
   if (letter !== round.answer) {
     recordMistake(round.result, { skill: "literacy", activity: "swap", responseType: "construction" });
     feedback("החלק לא מתאים למכונה. נסו אות אחרת.");
-    speak(round.say);
+    speak(letter, { supportive: true });
     return;
   }
   recordSuccess(round.result, { skill: "literacy", activity: "swap", responseType: "construction" });
@@ -923,6 +930,7 @@ function chooseCase(letter) {
   if (letter !== pair[1]) {
     recordMistake(pair[0], { skill: "literacy", activity: "case", responseType: "matching" });
     feedback("נסו שוב. חפשו את אותה צורה גדולה.");
+    speak(letter, { supportive: true });
     return;
   }
   recordSuccess(pair[0], { skill: "literacy", activity: "case", responseType: "matching" });
@@ -937,8 +945,8 @@ function chooseDialogue(choice) {
   const turn = mission.turns[session.round];
   if (choice !== turn.good) {
     recordMistake(turn.good, { skill: "productive", activity: "dialogue", responseType: "guided-choice" });
-    feedback("הקפטן מדגים את התשובה. נסו אותה יחד.");
-    speak(turn.good);
+    feedback("שמעתם את הבחירה. נסו תשובה אחרת.");
+    speak(choice, { supportive: true });
     return;
   }
   recordSuccess(turn.good, { skill: "productive", activity: "dialogue", responseType: "guided-choice", assisted: true });
