@@ -30,5 +30,10 @@ jobs:
       - name: Validate the audio inventory
         run: node scripts/build-audio-manifest.cjs --check
 
+      - name: Validate teaching order and lesson contracts
+        run: |
+          node scripts/validate-curriculum.cjs
+          node tests/curriculum-lint.cjs
+
       - name: Run curriculum smoke tests
         run: node tests/smoke.cjs

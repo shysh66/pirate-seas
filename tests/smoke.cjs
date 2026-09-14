@@ -52,8 +52,12 @@ assert.equal(spoken.at(-1).rate, .58, 'Single words should be spoken especially 
 assert.equal(spoken.at(-1).pitch, .96, 'Speech should use a calmer pitch');
 run('speak("This is my flag. Goodbye!")');
 assert.equal(spoken.at(-1).rate, .62, 'Short phrases should use the young-learner pace');
-run("state = freshState(); startMission('F00', 0); chooseAnswer('boat')");
-assert.equal(spoken.at(-1).text, 'Boat', 'A tapped picture should speak its own word, not repeat Hello');
+run("state = freshState(); startMission('F00', 0); collectItem('hello')");
+assert.equal(spoken.at(-1).text, 'Hello!', 'The first greeting should speak Hello');
+run("collectItem('goodbye')");
+assert.equal(spoken.at(-1).text, 'Goodbye!', 'The first mission should introduce Goodbye without unrelated distractors');
+run("state = freshState(); state.progress.F01 = 2; startMission('F01', 2); chooseAnswer('pig')");
+assert.equal(spoken.at(-1).text, 'pig', 'A tapped picture should speak its own word, not repeat the prompt');
 assert.equal(run('session.round'), 0, 'Speaking a wrong picture must not advance the mission');
 run('state = freshState(); showWorld()');
 assert.equal(api.CONTENT.filter(unit => unit.world === 'foundations').length, 6);
@@ -218,25 +222,25 @@ assert.equal(repairedState.progress.P01, 2, 'Existing Name Island progress shoul
 assert.equal(repairedState.coins, 17, 'Existing rewards should be preserved');
 
 // Reward commits are idempotent even if completion is delivered twice.
-run("state = freshState(); startMission('F00', 0); chooseAnswer('hello')");
+run("state = freshState(); startMission('F00', 0); collectItem('hello'); collectItem('goodbye')");
 const onceRewarded = api.getState().coins;
 run('completeMission()');
 assert.equal(api.getState().coins, onceRewarded, 'A repeated completion callback must not duplicate coins');
 assert.equal(Object.keys(api.getState().transactions).filter(key => key === 'mission:F00-M01').length, 1);
 
 // A delayed independent retrieval advances memory and leaves an auditable review event.
-run("state = freshState(); startMission('F00', 0); chooseAnswer('hello')");
-assert.equal(api.getState().memory['receptive:hello'].level, 1, 'First success should schedule learning, not mastery');
-run("state.memory['receptive:hello'].dueAt = 0; showWorld()");
+run("state = freshState(); state.progress.F01 = 2; startMission('F01', 2); chooseAnswer('sun')");
+assert.equal(api.getState().memory['receptive:sun'].level, 1, 'First success should schedule learning, not mastery');
+run("state.memory['receptive:sun'].dueAt = 0; showWorld()");
 assert.match(app.innerHTML, /1 פריטים מחכים לתרגול קצר/);
 run('startReview()');
 assert.match(app.innerHTML, /חזרה מרווחת/);
-run("chooseReview('hello')");
-assert.equal(api.getState().memory['receptive:hello'].level, 2, 'A later independent retrieval should advance one interval');
-assert(api.getState().evidence.some(event => event.activity === 'spaced-review' && event.itemId === 'hello'));
+run("chooseReview('sun')");
+assert.equal(api.getState().memory['receptive:sun'].level, 2, 'A later independent retrieval should advance one interval');
+assert(api.getState().evidence.some(event => event.activity === 'spaced-review' && event.itemId === 'sun'));
 
 // Replaying mission 1 of a completed location stays inside that location.
-run("state = freshState(); state.progress.F00 = 4; startMission('F00', 0); chooseAnswer('hello')");
+run("state = freshState(); state.progress.F00 = 4; startMission('F00', 0); collectItem('hello'); collectItem('goodbye')");
 assert.match(app.innerHTML, /למשימה הבאה במקום הזה/);
 assert.match(app.innerHTML, /startMission\('F00',1\)/);
 assert.doesNotMatch(app.innerHTML, /showUnit\('F01'\)/);

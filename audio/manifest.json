@@ -157,17 +157,6 @@
       "pronunciationReview": "pending",
       "rights": "pending"
     },
-    "boat": {
-      "id": "boat-ef58de4",
-      "text": "Boat",
-      "locale": "en-US",
-      "category": "word-or-chunk",
-      "normal": "audio/en-US/boat-ef58de4.mp3",
-      "supportive": "audio/en-US/boat-ef58de4-slow.mp3",
-      "status": "needed",
-      "pronunciationReview": "pending",
-      "rights": "pending"
-    },
     "box": {
       "id": "box-c7d8a6d",
       "text": "box",
@@ -653,12 +642,12 @@
       "rights": "pending"
     },
     "goodbye": {
-      "id": "goodbye-8f84614",
-      "text": "Goodbye!",
+      "id": "goodbye-3c8ec48",
+      "text": "goodbye",
       "locale": "en-US",
       "category": "word-or-chunk",
-      "normal": "audio/en-US/goodbye-8f84614.mp3",
-      "supportive": "audio/en-US/goodbye-8f84614-slow.mp3",
+      "normal": "audio/en-US/goodbye-3c8ec48.mp3",
+      "supportive": "audio/en-US/goodbye-3c8ec48-slow.mp3",
       "status": "needed",
       "pronunciationReview": "pending",
       "rights": "pending"
@@ -1242,17 +1231,6 @@
       "category": "word-or-chunk",
       "normal": "audio/en-US/p-pig-3f7bbcf.mp3",
       "supportive": "audio/en-US/p-pig-3f7bbcf-slow.mp3",
-      "status": "needed",
-      "pronunciationReview": "pending",
-      "rights": "pending"
-    },
-    "parrot": {
-      "id": "parrot-0fcb11d",
-      "text": "Parrot",
-      "locale": "en-US",
-      "category": "word-or-chunk",
-      "normal": "audio/en-US/parrot-0fcb11d.mp3",
-      "supportive": "audio/en-US/parrot-0fcb11d-slow.mp3",
       "status": "needed",
       "pronunciationReview": "pending",
       "rights": "pending"

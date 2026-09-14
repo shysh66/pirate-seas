@@ -1,7 +1,7 @@
 /* Pirate Seas — dependency-free curriculum prototype. */
 const STORAGE_KEY = "pirate-seas-v2";
 const STATE_VERSION = 5;
-const CONTENT_VERSION = 3;
+const CONTENT_VERSION = 4;
 const DAY_MS = 24 * 60 * 60 * 1000;
 const REVIEW_INTERVAL_DAYS = [0, 1, 3, 7, 14, 30];
 const MAX_EVIDENCE_EVENTS = 800;
@@ -14,9 +14,7 @@ const CONTENT = [
     id: "F00", world: "foundations", icon: "⚓", nameHe: "נמל ההתחלה", nameEn: "Starting Harbor",
     summaryHe: "פוגשים את התוכי ולומדים להקשיב, לבחור, לנוע ולעצור.", reward: 20,
     missions: [
-      { id: "F00-M01", icon: "👋", nameHe: "שלום, תוכי!", kind: "choice", instructionHe: "שמעו Hello. געו ביד. 👋", rounds: [
-        { say: "Hello!", answer: "hello", options: [O("hello", "👋", "Hello!"), O("boat", "⛵", "Boat"), O("parrot", "🦜", "Parrot")] }
-      ] },
+      { id: "F00-M01", icon: "👋", nameHe: "שלום, תוכי!", kind: "collect", instructionHe: "געו בשתי הברכות ושמעו.", items: [O("hello", "👋", "Hello!"), O("goodbye", "🙋", "Goodbye!")] },
       { id: "F00-M02", icon: "🔊", nameHe: "בודקים את הצליל", kind: "collect", instructionHe: "געו בכל תמונה ושמעו.", items: [O("listen", "👂", "Listen"), O("look", "👀", "Look"), O("yes", "👍", "Yes"), O("no", "👎", "No")] },
       { id: "F00-M03", icon: "⛵", nameHe: "הסירה זזה", kind: "sail", instructionHe: "שמעו. השיטו או עצרו.", rounds: [
         { say: "Go!", answer: "go", options: [O("go", "▶️", "Go"), O("stop", "⏹️", "Stop")] },

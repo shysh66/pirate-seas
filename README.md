@@ -25,14 +25,17 @@ Run the automated checks with:
 ```bash
 node --check app.js
 node scripts/build-audio-manifest.cjs --check
+node scripts/validate-curriculum.cjs
+node tests/curriculum-lint.cjs
 node tests/smoke.cjs
 ```
 
-The checks validate the 201-clip audio inventory, content contract, all 47 implemented missions across 9 locations, combined learning track, activity variety, item evidence, spaced review, transactional rewards, progression, persistence, retry behavior, and generated inline handlers.
+The checks validate the 199-clip audio inventory, all 47 explicit teaching contracts, prerequisite order, assessment timing, distractor policy, instruction length, all implemented missions across 9 locations, combined learning track, activity variety, item evidence, spaced review, transactional rewards, progression, persistence, retry behavior, and generated inline handlers. Negative fixtures also prove that CI rejects missing contracts, untaught requirements, premature assessment, missing distractor categories, and overlong beginner instructions.
 
 ## Documents
 
 - [`docs/whole-game-design-abc-a2.md`](docs/whole-game-design-abc-a2.md): definitive journey from Starting Harbor through A1, plus the A2 roadmap.
+- [`curriculum/mission-contracts.json`](curriculum/mission-contracts.json): machine-checked teaching, prerequisite, assessment, and distractor contract for every implemented mission.
 - [`island-3-name-island-spec.md`](island-3-name-island-spec.md): original Name Island design input.
 - [`island-4-rainbow-reef-spec.md`](island-4-rainbow-reef-spec.md): Rainbow Reef design input.
 - [`tech-architecture.md`](tech-architecture.md): longer-term production architecture.
